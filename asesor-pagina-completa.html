@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Monopolio — Perfil de Asesor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ─── TOKENS ──────────────────────────────────────── */
+:root {
+  /* Brand */
+  --blue-900: #0F1F3D;
+  --blue-700: #1A3A6B;
+  --blue-600: #1D4ED8;
+  --blue-500: #2563EB;
+  --blue-100: #DBEAFE;
+  --blue-50:  #EFF6FF;
+
+  /* Success */
+  --green-600: #059669;
+  --green-500: #10B981;
+  --green-100: #D1FAE5;
+  --green-50:  #ECFDF5;
+
+  /* Neutral */
+  --n-950: #0A0A0A;
+  --n-900: #111827;
+  --n-800: #1F2937;
+  --n-700: #374151;
+  --n-600: #4B5563;
+  --n-500: #6B7280;
+  --n-400: #9CA3AF;
+  --n-300: #D1D5DB;
+  --n-200: #E5E7EB;
+  --n-100: #F3F4F6;
+  --n-50:  #F9FAFB;
+  --white: #FFFFFF;
+
+  /* Typography scale — 2 weights only in use: 400, 600 */
+  --text-xs:   11px;
+  --text-sm:   12px;
+  --text-base: 13px;
+  --text-md:   15px;
+  --text-lg:   18px;
+  --text-xl:   22px;
+  --text-2xl:  28px;
+
+  /* Spacing — 4/8px base */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+
+  /* Radii */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+  --r-full: 9999px;
+
+  /* Shadows — functional only */
+  --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-float: 0 4px 16px rgba(0,0,0,.10);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--n-100);
+  color: var(--n-900);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── DEMO SHELL ──────────────────────────────────── */
+.demo-bar {
+  background: var(--n-950);
+  padding: 12px var(--sp-8);
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 200;
+  gap: 24px;
+}
+.demo-logo { color: var(--blue-400); font-size: var(--text-md); font-weight: 700; letter-spacing: -.3px; }
+.demo-context { color: var(--n-500); font-size: var(--text-xs); font-weight: 500; }
+
+/* Variant switcher — dos fichas claras */
+.variant-switcher {
+  display: flex; gap: 6px;
+}
+.vs-btn {
+  display: flex; flex-direction: column; align-items: flex-start;
+  padding: 8px 16px; border-radius: var(--r-md); border: 1px solid transparent;
+  cursor: pointer; background: transparent; font-family: inherit;
+  transition: all .15s; text-align: left;
+}
+.vs-btn:hover:not(.on) { background: rgba(255,255,255,.04); }
+.vs-btn.on {
+  background: var(--white);
+  border-color: var(--white);
+}
+.vs-label {
+  display: block; font-size: var(--text-sm); font-weight: 600;
+  color: var(--n-500); line-height: 1;
+}
+.vs-btn.on .vs-label { color: var(--n-900); }
+.vs-sub {
+  display: block; font-size: 10px; color: var(--n-600); margin-top: 3px;
+  font-weight: 400;
+}
+.vs-btn.on .vs-sub { color: var(--n-500); }
+
+/* Indicator dot */
+.vs-dot {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--n-600); margin-right: 5px; vertical-align: middle;
+  position: relative; top: -1px;
+}
+.vs-btn.on .vs-dot { background: var(--blue-600); }
+
+/* ─── PAGE SHELL ──────────────────────────────────── */
+.page { max-width: 1080px; margin: 0 auto; padding: var(--sp-6) var(--sp-6) 80px; }
+
+.breadcrumb {
+  display: flex; align-items: center; gap: var(--sp-2);
+  font-size: var(--text-xs); color: var(--n-400);
+  margin-bottom: var(--sp-5);
+}
+.breadcrumb a { color: var(--n-400); text-decoration: none; }
+.breadcrumb a:hover { color: var(--n-700); }
+.breadcrumb span { color: var(--n-300); }
+
+/* ─── HERO ────────────────────────────────────────── */
+/*
+  Diseño rationale:
+  El hero responde la pregunta en 5 seg:
+  QUIÉN + DÓNDE OPERA + CÓMO LO CONTACTO
+  Nada más. El precio y portafolio van en stats.
+*/
+.hero {
+  background: var(--n-900);
+  border-radius: var(--r-xl);
+  margin-bottom: var(--sp-3);
+  overflow: hidden;
+}
+.hero-inner {
+  padding: var(--sp-8) var(--sp-10);
+  display: flex; align-items: flex-start; gap: var(--sp-6);
+}
+
+/* Avatar — funcional, sin decoración */
+.avatar {
+  width: 72px; height: 72px; border-radius: 50%; flex-shrink: 0;
+  background: var(--n-700);
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--text-xl); font-weight: 700; color: var(--white);
+  border: 2px solid var(--n-700);
+  position: relative;
+}
+.avatar.verified { border-color: var(--green-500); }
+.avatar .v-dot {
+  position: absolute; bottom: 1px; right: 1px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--green-500); border: 2px solid var(--n-900);
+  display: flex; align-items: center; justify-content: center;
+}
+.avatar .v-dot svg { width: 9px; height: 9px; }
+
+/* Identity block */
+.hero-identity { flex: 1; }
+.hero-name { font-size: var(--text-2xl); font-weight: 700; color: var(--white); line-height: 1.15; }
+.hero-sub {
+  display: flex; align-items: center; gap: var(--sp-2);
+  margin-top: var(--sp-2); flex-wrap: wrap;
+}
+.hero-role { font-size: var(--text-sm); color: var(--n-400); font-weight: 400; }
+.hero-sep { color: var(--n-700); font-size: var(--text-sm); }
+.verified-label {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: var(--text-xs); font-weight: 600;
+  color: var(--green-500);
+}
+.verified-label svg { width: 11px; height: 11px; }
+
+/* Agency — secondary info, compact */
+.hero-agency {
+  display: flex; align-items: center; gap: var(--sp-2);
+  margin-top: var(--sp-4);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--n-800);
+  border-radius: var(--r-sm);
+  width: fit-content;
+}
+.agency-logo {
+  width: 24px; height: 24px; border-radius: 4px;
+  background: var(--n-700);
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--text-xs); font-weight: 700; color: var(--n-300);
+}
+.agency-name { font-size: var(--text-sm); color: var(--n-300); font-weight: 500; }
+.agency-role { font-size: var(--text-xs); color: var(--n-500); }
+.agency-pipe { color: var(--n-700); margin: 0 2px; }
+
+/* Zones — CRÍTICO: visible en el hero sin scroll */
+.hero-zones { margin-top: var(--sp-5); }
+.zones-label {
+  font-size: var(--text-xs); font-weight: 600; color: var(--n-500);
+  text-transform: uppercase; letter-spacing: .6px; margin-bottom: var(--sp-2);
+}
+.zones-list { display: flex; flex-wrap: wrap; gap: var(--sp-1); }
+.zone-tag {
+  font-size: var(--text-sm); color: var(--n-300);
+  background: var(--n-800); border-radius: var(--r-sm);
+  padding: 3px var(--sp-2); font-weight: 400;
+}
+.zone-tag.primary { color: var(--white); background: var(--n-700); font-weight: 500; }
+
+/* CTA column */
+.hero-cta { display: flex; flex-direction: column; gap: var(--sp-2); flex-shrink: 0; }
+.btn-wa {
+  display: flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  background: #22C55E; color: var(--white); border: none;
+  border-radius: var(--r-md); padding: 11px 20px;
+  font-size: var(--text-base); font-weight: 600;
+  cursor: pointer; white-space: nowrap; min-width: 192px;
+  font-family: inherit; transition: opacity .15s;
+}
+.btn-wa:hover { opacity: .88; }
+.btn-call {
+  display: flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  background: transparent; color: var(--n-300);
+  border: 1px solid var(--n-700); border-radius: var(--r-md);
+  padding: 10px 20px; font-size: var(--text-base); font-weight: 500;
+  cursor: pointer; font-family: inherit; transition: border-color .15s, color .15s;
+}
+.btn-call:hover { border-color: var(--n-500); color: var(--white); }
+.btn-mail {
+  display: flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  background: transparent; color: var(--n-600);
+  border: 1px solid var(--n-800); border-radius: var(--r-md);
+  padding: 8px 20px; font-size: var(--text-sm); font-weight: 500;
+  cursor: pointer; font-family: inherit; transition: color .15s;
+}
+.btn-mail:hover { color: var(--n-400); }
+
+/* ─── STATS STRIP ─────────────────────────────────── */
+/*
+  Crítico: las 3 variables más importantes para decidir.
+  Ventas y colaboraciones visibles como "—" — no ocultos,
+  no ruidosos. El estado "próximamente" se comunica
+  sin llamar la atención sobre lo que falta.
+*/
+.stats-strip {
+  background: var(--white);
+  border: 1px solid var(--n-200);
+  border-radius: var(--r-xl);
+  display: grid;
+  margin-bottom: var(--sp-5);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+.stats-strip.s2 { grid-template-columns: 1fr 1fr; }
+.stats-strip.s5 { grid-template-columns: repeat(5, 1fr); }
+
+.stat-cell {
+  padding: 18px var(--sp-4);
+  text-align: center;
+  border-right: 1px solid var(--n-200);
+}
+.stat-cell:last-child { border-right: none; }
+
+.stat-val {
+  display: block;
+  font-size: var(--text-2xl); font-weight: 700;
+  color: var(--n-900); line-height: 1;
+}
+.stat-val.muted { font-size: var(--text-xl); color: var(--n-300); font-weight: 400; }
+.stat-lbl {
+  display: block;
+  font-size: var(--text-xs); font-weight: 500;
+  color: var(--n-500); text-transform: uppercase;
+  letter-spacing: .5px; margin-top: 5px;
+}
+.stat-sub {
+  display: block;
+  font-size: var(--text-xs); color: var(--n-400); margin-top: 2px;
+}
+.stat-soon {
+  display: block;
+  font-size: var(--text-xs); color: var(--n-400);
+  font-style: italic; margin-top: 3px;
+}
+
+/* ─── MAIN LAYOUT ─────────────────────────────────── */
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: var(--sp-5); align-items: start; }
+
+/* ─── CARD ────────────────────────────────────────── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--n-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  margin-bottom: var(--sp-4);
+}
+.card-head {
+  padding: var(--sp-4) var(--sp-5);
+  border-bottom: 1px solid var(--n-100);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-head h3 { font-size: var(--text-base); font-weight: 600; color: var(--n-900); }
+.card-head .count { color: var(--n-400); font-weight: 400; margin-left: 4px; }
+.card-head a {
+  font-size: var(--text-sm); color: var(--blue-600); text-decoration: none; font-weight: 500;
+}
+.card-body { padding: var(--sp-5); }
+
+/* ─── ESPECIALIZACIÓN ─────────────────────────────── */
+/*
+  Responde: ¿trabaja en mi zona? ¿en mi rango?
+  Información más crítica para la decisión.
+  Sin emojis. Sin chips de colores decorativos.
+*/
+.spec-section { margin-bottom: var(--sp-5); }
+.spec-section:last-child { margin-bottom: 0; }
+.spec-label {
+  font-size: var(--text-xs); font-weight: 600;
+  text-transform: uppercase; letter-spacing: .6px;
+  color: var(--n-400); margin-bottom: var(--sp-3);
+}
+
+/* Zonas con % de actividad */
+.zone-rows { display: flex; flex-direction: column; gap: var(--sp-2); }
+.zone-row { display: flex; align-items: center; gap: var(--sp-3); }
+.zone-name { font-size: var(--text-base); color: var(--n-700); font-weight: 500; width: 130px; flex-shrink: 0; }
+.zone-bar-wrap { flex: 1; height: 4px; background: var(--n-100); border-radius: var(--r-full); }
+.zone-bar { height: 4px; background: var(--blue-600); border-radius: var(--r-full); }
+.zone-pct { font-size: var(--text-xs); color: var(--n-400); width: 28px; text-align: right; flex-shrink: 0; }
+.zone-pct.eco-only { display: none; }
+
+/* Rango de precio */
+.price-visual { margin-top: var(--sp-2); }
+.price-scale {
+  display: flex; justify-content: space-between;
+  font-size: var(--text-xs); color: var(--n-400); margin-bottom: var(--sp-2);
+}
+.price-track { height: 6px; background: var(--n-100); border-radius: var(--r-full); position: relative; }
+.price-fill {
+  position: absolute; top: 0; height: 6px;
+  background: var(--blue-600); border-radius: var(--r-full);
+  opacity: .6;
+}
+.price-avg-marker {
+  position: absolute; top: -3px; height: 12px; width: 2px;
+  background: var(--blue-600); border-radius: 1px;
+}
+.price-avg-row {
+  display: flex; align-items: center; gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+.price-avg-label { font-size: var(--text-xs); color: var(--n-500); }
+.price-avg-val { font-size: var(--text-sm); font-weight: 600; color: var(--n-900); }
+
+/* Operaciones split */
+.ops-row { display: flex; align-items: center; gap: var(--sp-3); }
+.ops-bar-wrap { flex: 1; height: 6px; display: flex; border-radius: var(--r-full); overflow: hidden; }
+.ops-seg { height: 6px; }
+.ops-seg.v { background: var(--blue-600); }
+.ops-seg.r { background: var(--green-500); }
+.ops-legend { display: flex; gap: var(--sp-4); }
+.ops-item { display: flex; align-items: center; gap: 5px; font-size: var(--text-xs); color: var(--n-600); }
+.ops-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.ops-dot.v { background: var(--blue-600); }
+.ops-dot.r { background: var(--green-500); }
+
+/* Meta pills — sin color decorativo */
+.meta-row { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-top: var(--sp-2); }
+.meta-pill {
+  font-size: var(--text-xs); color: var(--n-600); font-weight: 500;
+  background: var(--n-50); border: 1px solid var(--n-200);
+  padding: 3px var(--sp-2); border-radius: var(--r-sm);
+}
+
+/* ─── PROPIEDADES ─────────────────────────────────── */
+.prop-filters { display: flex; gap: var(--sp-2); margin-bottom: var(--sp-4); flex-wrap: wrap; }
+.pf {
+  padding: 5px var(--sp-3); border-radius: var(--r-full);
+  border: 1px solid var(--n-200); background: var(--white);
+  color: var(--n-600); font-size: var(--text-sm); font-weight: 500;
+  cursor: pointer; transition: all .15s; font-family: inherit;
+}
+.pf.on { background: var(--n-900); color: var(--white); border-color: var(--n-900); }
+.pf:hover:not(.on) { background: var(--n-50); }
+
+.prop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
+.prop-card {
+  border: 1px solid var(--n-200); border-radius: var(--r-lg); overflow: hidden;
+  cursor: pointer; transition: box-shadow .15s;
+}
+.prop-card:hover { box-shadow: var(--shadow-float); }
+
+.pc-img {
+  height: 110px; position: relative;
+  background: var(--n-200);
+  display: flex; align-items: flex-end; padding: var(--sp-2);
+}
+/* Subtle variety without emojis */
+.pc-img.v1 { background: linear-gradient(160deg, #CBD5E1 0%, #94A3B8 100%); }
+.pc-img.v2 { background: linear-gradient(160deg, #C4B5A5 0%, #9C8575 100%); }
+.pc-img.v3 { background: linear-gradient(160deg, #A5C4B5 0%, #759C85 100%); }
+.pc-img.v4 { background: linear-gradient(160deg, #B5A5C4 0%, #856895 100%); }
+.pc-img.v5 { background: linear-gradient(160deg, #A5B5C4 0%, #758595 100%); }
+.pc-img.v6 { background: linear-gradient(160deg, #C4C4A5 0%, #9C9C75 100%); }
+
+.op-label {
+  font-size: var(--text-xs); font-weight: 700;
+  padding: 2px var(--sp-2); border-radius: 4px;
+  text-transform: uppercase; letter-spacing: .3px;
+}
+.op-label.venta { background: var(--blue-600); color: var(--white); }
+.op-label.renta { background: var(--n-900); color: var(--white); }
+
+.pc-body { padding: var(--sp-3); }
+.pc-price { font-size: var(--text-md); font-weight: 700; color: var(--n-900); }
+.pc-price-unit { font-size: var(--text-xs); font-weight: 400; color: var(--n-500); }
+.pc-meta { font-size: var(--text-xs); color: var(--n-500); margin-top: 2px; }
+.pc-attrs {
+  display: flex; gap: var(--sp-3); margin-top: var(--sp-2);
+  padding-top: var(--sp-2); border-top: 1px solid var(--n-100);
+  font-size: var(--text-xs); color: var(--n-500);
+}
+
+.show-more {
+  width: 100%; margin-top: var(--sp-4);
+  padding: 10px; background: transparent;
+  border: 1px solid var(--n-200); border-radius: var(--r-md);
+  color: var(--n-600); font-size: var(--text-sm); font-weight: 500;
+  cursor: pointer; font-family: inherit; transition: background .15s;
+}
+.show-more:hover { background: var(--n-50); }
+
+/* ─── SERVICIOS ───────────────────────────────────── */
+.services-list { display: flex; flex-direction: column; gap: 1px; }
+.srv {
+  display: flex; align-items: baseline; gap: var(--sp-3);
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--n-100);
+}
+.srv:last-child { border-bottom: none; }
+.srv-name { font-size: var(--text-base); font-weight: 500; color: var(--n-900); min-width: 200px; }
+.srv-desc { font-size: var(--text-sm); color: var(--n-500); }
+
+/* ─── AGENCIA ─────────────────────────────────────── */
+.agency-section { padding: var(--sp-5); }
+.agency-top { display: flex; align-items: flex-start; gap: var(--sp-4); }
+.agency-logo-lg {
+  width: 44px; height: 44px; border-radius: var(--r-md); flex-shrink: 0;
+  background: var(--n-100); border: 1px solid var(--n-200);
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--text-md); font-weight: 700; color: var(--n-600);
+}
+.agency-info { flex: 1; }
+.agency-nm { font-size: var(--text-md); font-weight: 600; }
+.agency-address { font-size: var(--text-sm); color: var(--n-500); margin-top: 2px; }
+.agency-figures {
+  display: flex; gap: var(--sp-6); margin-top: var(--sp-4);
+  padding-top: var(--sp-4); border-top: 1px solid var(--n-100);
+}
+.agency-fig b { font-size: var(--text-lg); font-weight: 700; color: var(--n-900); display: block; }
+.agency-fig span { font-size: var(--text-xs); color: var(--n-400); text-transform: uppercase; letter-spacing: .5px; }
+
+/* ─── SIDEBAR ─────────────────────────────────────── */
+.sidebar-card {
+  background: var(--white); border: 1px solid var(--n-200);
+  border-radius: var(--r-xl); box-shadow: var(--shadow-card);
+  overflow: hidden; margin-bottom: var(--sp-3);
+}
+.sc-body { padding: var(--sp-4); }
+
+/* CTAs */
+.cta-wa {
+  display: flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  background: #22C55E; color: var(--white); border: none;
+  border-radius: var(--r-md); padding: 12px; width: 100%;
+  font-size: var(--text-base); font-weight: 600; cursor: pointer;
+  font-family: inherit; margin-bottom: var(--sp-2); transition: opacity .15s;
+}
+.cta-wa:hover { opacity: .88; }
+.cta-call {
+  display: flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  background: var(--white); color: var(--n-900);
+  border: 1px solid var(--n-300); border-radius: var(--r-md);
+  padding: 10px; width: 100%;
+  font-size: var(--text-base); font-weight: 500;
+  cursor: pointer; font-family: inherit; margin-bottom: var(--sp-2);
+  transition: background .15s;
+}
+.cta-call:hover { background: var(--n-50); }
+.cta-mail {
+  display: flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  background: transparent; color: var(--n-500);
+  border: 1px solid var(--n-200); border-radius: var(--r-md);
+  padding: 9px; width: 100%;
+  font-size: var(--text-sm); font-weight: 500;
+  cursor: pointer; font-family: inherit;
+}
+
+/* Respuesta */
+.resp-section {
+  padding: var(--sp-4); border-top: 1px solid var(--n-100);
+}
+.resp-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--sp-2); }
+.resp-label { font-size: var(--text-sm); color: var(--n-600); }
+.resp-value { font-size: var(--text-sm); font-weight: 600; color: var(--green-600); }
+.resp-track { height: 4px; background: var(--n-100); border-radius: var(--r-full); }
+.resp-fill { height: 4px; background: var(--green-500); border-radius: var(--r-full); }
+.resp-sub { font-size: var(--text-xs); color: var(--n-400); margin-top: var(--sp-1); }
+
+/* Disponibilidad */
+.sc-header {
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--n-100);
+  font-size: var(--text-sm); font-weight: 600; color: var(--n-700);
+}
+.avail-row { display: flex; align-items: center; gap: var(--sp-2); }
+.avail-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-500); flex-shrink: 0; }
+.avail-text { font-size: var(--text-sm); color: var(--n-700); font-weight: 500; }
+.avail-hours { font-size: var(--text-xs); color: var(--n-400); margin-top: 4px; }
+.day-row { display: flex; gap: 4px; margin-top: var(--sp-2); }
+.day {
+  flex: 1; text-align: center; font-size: var(--text-xs); font-weight: 500;
+  padding: 4px 0; border-radius: 4px;
+  background: var(--n-100); color: var(--n-400);
+}
+.day.on { background: var(--green-100); color: var(--green-600); }
+
+/* Contacto detalle */
+.contact-row {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: 10px 0; border-bottom: 1px solid var(--n-100);
+}
+.contact-row:last-child { border-bottom: none; }
+.contact-icon {
+  width: 32px; height: 32px; border-radius: var(--r-sm);
+  background: var(--n-50); border: 1px solid var(--n-200);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.contact-icon svg { width: 15px; height: 15px; }
+.contact-label { font-size: var(--text-xs); color: var(--n-400); text-transform: uppercase; letter-spacing: .4px; }
+.contact-val { font-size: var(--text-sm); font-weight: 500; color: var(--n-900); margin-top: 1px; }
+
+/* Verificaciones */
+.verif-row {
+  display: flex; align-items: flex-start; gap: var(--sp-3);
+  padding: 10px 0; border-bottom: 1px solid var(--n-100);
+}
+.verif-row:last-child { border-bottom: none; }
+.verif-icon {
+  width: 28px; height: 28px; border-radius: var(--r-sm);
+  background: var(--green-50); border: 1px solid var(--green-100);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.verif-icon svg { width: 13px; height: 13px; color: var(--green-600); }
+.verif-name { font-size: var(--text-sm); font-weight: 500; color: var(--n-900); }
+.verif-desc { font-size: var(--text-xs); color: var(--n-400); margin-top: 1px; }
+.cert-tag {
+  display: inline-block; font-size: var(--text-xs); font-weight: 600;
+  background: var(--n-100); color: var(--n-600);
+  padding: 2px 7px; border-radius: 4px; margin-top: 4px;
+  border: 1px solid var(--n-200);
+}
+
+/* Join CTA — externo */
+.join-block {
+  background: var(--blue-50); border: 1px solid var(--blue-100);
+  border-radius: var(--r-xl); padding: var(--sp-6);
+  text-align: center; margin-bottom: var(--sp-4);
+}
+.join-block h4 { font-size: var(--text-md); font-weight: 600; color: var(--blue-700); }
+.join-block p { font-size: var(--text-sm); color: var(--n-500); margin-top: var(--sp-2); line-height: 1.6; max-width: 320px; margin-left: auto; margin-right: auto; }
+.join-block button {
+  margin-top: var(--sp-5); background: var(--blue-600); color: var(--white);
+  border: none; border-radius: var(--r-md); padding: 10px 20px;
+  font-size: var(--text-base); font-weight: 600; cursor: pointer; font-family: inherit;
+}
+
+/* ─── UPCOMING DATA ───────────────────────────────── */
+/*
+  Los datos "próximamente" no necesitan caja especial.
+  Se comunican como parte de la ficha, en gris.
+  No ruido, no llamar la atención sobre lo que falta.
+*/
+.upcoming-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--n-100);
+}
+.upcoming-row:last-child { border-bottom: none; }
+.upcoming-name { font-size: var(--text-sm); color: var(--n-400); }
+.upcoming-val { font-size: var(--text-xs); color: var(--n-300); font-style: italic; }
+
+/* ─── VISIBILITY ──────────────────────────────────── */
+.eco-only     { display: none; }
+.ext-only     { display: none; }
+.agency-only  { display: none; }
+.advisor-only { display: block; }
+
+body.eco    .eco-only    { display: block; }
+body.ext    .ext-only    { display: block; }
+body.agency .agency-only { display: block; }
+
+/* Fix grid override for stats strips */
+body.eco    .stats-strip.eco-only    { display: grid; }
+body.ext    .stats-strip.ext-only    { display: grid; }
+body.agency .stats-strip.agency-only { display: grid; }
+
+/* In agency view, hide advisor-specific content */
+body.agency .advisor-only { display: none; }
+body.agency .eco-only     { display: none !important; }
+body.agency .ext-only     { display: none !important; }
+
+body.eco .eco-flex { display: flex !important; }
+body.eco .zone-pct.eco-only { display: block; }
+body.agency .zone-pct.eco-only { display: block; }
+
+/* Agency hero avatar — square logo mark */
+body.agency .avatar {
+  border-radius: var(--r-lg);
+  background: var(--n-600);
+  border-color: var(--n-700);
+  font-size: var(--text-2xl);
+  width: 80px; height: 80px;
+}
+
+/* ─── RESPONSIVE ──────────────────────────────────── */
+/* ─── TEAM GRID (agency) ──────────────────────────── */
+.team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
+.team-card {
+  border: 1px solid var(--n-200); border-radius: var(--r-lg);
+  padding: var(--sp-4); text-align: center; cursor: pointer;
+  transition: box-shadow .15s;
+}
+.team-card:hover { box-shadow: var(--shadow-float); }
+.team-av {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--n-100); border: 1px solid var(--n-200);
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--text-sm); font-weight: 700; color: var(--n-600);
+  margin: 0 auto var(--sp-2);
+}
+.team-name { font-size: var(--text-sm); font-weight: 600; color: var(--n-900); }
+.team-role { font-size: var(--text-xs); color: var(--n-500); margin-top: 2px; }
+.team-stat { font-size: var(--text-xs); color: var(--n-400); margin-top: var(--sp-2); padding-top: var(--sp-2); border-top: 1px solid var(--n-100); }
+.team-stat b { color: var(--n-700); font-weight: 600; }
+
+/* Sobre la agencia */
+.about-row { display: flex; flex-direction: column; gap: var(--sp-3); }
+.about-item { display: flex; align-items: baseline; gap: var(--sp-3); padding: var(--sp-2) 0; border-bottom: 1px solid var(--n-100); }
+.about-item:last-child { border-bottom: none; }
+.about-lbl { font-size: var(--text-xs); color: var(--n-400); text-transform: uppercase; letter-spacing: .5px; min-width: 90px; flex-shrink: 0; }
+.about-val { font-size: var(--text-sm); color: var(--n-700); font-weight: 500; }
+
+@media (max-width: 880px) {
+  .layout { grid-template-columns: 1fr; }
+  .prop-grid { grid-template-columns: 1fr 1fr; }
+  .hero-inner { flex-direction: column; }
+  .hero-cta { flex-direction: row; flex-wrap: wrap; }
+  .stats-strip.s5 { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 580px) {
+  .prop-grid { grid-template-columns: 1fr; }
+  .hero-inner { padding: var(--sp-5); }
+}
+</style>
+</head>
+<body class="ext">
+
+<!-- DEMO BAR -->
+<div class="demo-bar">
+  <div style="display:flex;align-items:center;gap:16px">
+    <span class="demo-logo">Monopolio</span>
+    <span class="demo-context">Prototipo · Vista Ampliada</span>
+  </div>
+  <div class="variant-switcher">
+    <button class="vs-btn on" onclick="setVariant('ext',this)">
+      <span class="vs-label"><span class="vs-dot"></span>Asesor Externo</span>
+      <span class="vs-sub">Sin cuenta en Monopolio</span>
+    </button>
+    <button class="vs-btn" onclick="setVariant('eco',this)">
+      <span class="vs-label"><span class="vs-dot"></span>Asesor Monopolio</span>
+      <span class="vs-sub">Registrado en el ecosistema</span>
+    </button>
+    <button class="vs-btn" onclick="setVariant('agency',this)">
+      <span class="vs-label"><span class="vs-dot"></span>Agencia</span>
+      <span class="vs-sub">Perfil de la agencia</span>
+    </button>
+  </div>
+</div>
+
+<!-- PAGE -->
+<div class="page">
+  <div class="breadcrumb">
+    <a href="#">Inicio</a><span>/</span>
+    <a href="#">Asesores</a><span>/</span>
+    <span id="bc">Juan Rodríguez</span>
+  </div>
+
+  <!-- ══ HERO ══════════════════════════════════════ -->
+  <div class="hero">
+    <div class="hero-inner">
+
+      <div class="avatar" id="av">JR</div>
+
+      <div class="hero-identity">
+        <div class="hero-name" id="h-name">Juan Rodríguez</div>
+
+        <div class="hero-sub">
+          <span class="hero-role" id="h-role">Agente Independiente</span>
+          <!-- Verificado — solo eco -->
+          <span class="hero-sep eco-only">·</span>
+          <span class="verified-label eco-only">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Verificado
+          </span>
+          <!-- Verificado — solo agencia -->
+          <span class="hero-sep agency-only">·</span>
+          <span class="verified-label agency-only">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Agencia verificada
+          </span>
+        </div>
+
+        <!-- Agencia a la que pertenece el asesor — solo eco -->
+        <div class="hero-agency eco-only">
+          <div class="agency-logo">M</div>
+          <span class="agency-name">MarCa Inmobiliaria</span>
+          <span class="agency-pipe">·</span>
+          <span class="agency-role">Directora</span>
+          <span class="agency-pipe">·</span>
+          <span class="agency-role">Coyoacán, CDMX</span>
+        </div>
+
+        <!-- Dirección de la agencia — solo agencia -->
+        <div class="agency-only" style="margin-top:14px">
+          <span style="font-size:12px;color:var(--n-400)">Miguel Ángel de Quevedo 878 · Coyoacán, CDMX</span>
+        </div>
+
+        <!-- Ubicación — solo ext -->
+        <div class="ext-only" style="margin-top:14px">
+          <span style="font-size:12px;color:var(--n-500)">Ciudad de México</span>
+        </div>
+
+        <!-- Zonas — CRÍTICO, visible en el hero -->
+        <div class="hero-zones">
+          <div class="zones-label" id="zones-label">Opera en</div>
+          <div class="zones-list">
+            <span class="zone-tag primary">Coyoacán</span>
+            <span class="zone-tag primary">Polanco</span>
+            <span class="zone-tag">Condesa</span>
+            <span class="zone-tag">Roma Norte</span>
+            <span class="zone-tag">Tlalpan</span>
+            <span class="zone-tag eco-only" style="display:none">Mérida</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTAs -->
+      <div class="hero-cta">
+        <button class="btn-wa">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+          WhatsApp
+        </button>
+        <button class="btn-call">Llamar</button>
+        <button class="btn-mail eco-only" style="display:none">Correo</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ STATS ══════════════════════════════════════ -->
+
+  <!-- Ext: 2 stats -->
+  <div class="stats-strip s2 ext-only">
+    <div class="stat-cell">
+      <span class="stat-val">24</span>
+      <span class="stat-lbl">Propiedades activas</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-val">8 años</span>
+      <span class="stat-lbl">En el sector</span>
+    </div>
+  </div>
+
+  <!-- Eco: 5 stats — asesor en ecosistema -->
+  <div class="stats-strip s5 eco-only">
+    <div class="stat-cell">
+      <span class="stat-val">124</span>
+      <span class="stat-lbl">Propiedades</span>
+      <span class="stat-sub">propias activas</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-val">5</span>
+      <span class="stat-lbl">Equipo</span>
+      <span class="stat-sub">asesores en su agencia</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-val">92%</span>
+      <span class="stat-lbl">Respuesta</span>
+      <span class="stat-sub">menos de 2h</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-val muted">—</span>
+      <span class="stat-lbl">Ventas</span>
+      <span class="stat-soon">próximamente</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-val muted">—</span>
+      <span class="stat-lbl">Colaboraciones</span>
+      <span class="stat-soon">próximamente</span>
+    </div>
+  </div>
+
+  <!-- Agency: 4 stats — cifras de la agencia -->
+  <div class="stats-strip agency-only" style="grid-template-columns:repeat(4,1fr)">
+    <div class="stat-cell">
+      <span class="stat-val">124</span>
+      <span class="stat-lbl">Propiedades</span>
+      <span class="stat-sub">portafolio total</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-val">5</span>
+      <span class="stat-lbl">Asesores</span>
+      <span class="stat-sub">en el equipo</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-val">92%</span>
+      <span class="stat-lbl">Respuesta</span>
+      <span class="stat-sub">menos de 2h</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-val">6 años</span>
+      <span class="stat-lbl">En Monopolio</span>
+      <span class="stat-sub">desde 2019</span>
+    </div>
+  </div>
+
+  <!-- ══ MAIN LAYOUT ════════════════════════════════ -->
+  <div class="layout">
+
+    <!-- LEFT -->
+    <div>
+
+      <!-- ESPECIALIZACIÓN -->
+      <div class="card">
+        <div class="card-head"><h3>Especialización</h3></div>
+        <div class="card-body">
+
+          <!-- Zonas con actividad relativa -->
+          <div class="spec-section">
+            <div class="spec-label">Zonas principales</div>
+            <div class="zone-rows">
+              <div class="zone-row">
+                <span class="zone-name">Coyoacán</span>
+                <div class="zone-bar-wrap"><div class="zone-bar" style="width:100%"></div></div>
+                <span class="zone-pct eco-only">42%</span>
+              </div>
+              <div class="zone-row">
+                <span class="zone-name">Polanco</span>
+                <div class="zone-bar-wrap"><div class="zone-bar" style="width:67%"></div></div>
+                <span class="zone-pct eco-only">28%</span>
+              </div>
+              <div class="zone-row">
+                <span class="zone-name">Condesa</span>
+                <div class="zone-bar-wrap"><div class="zone-bar" style="width:36%"></div></div>
+                <span class="zone-pct eco-only">15%</span>
+              </div>
+              <div class="zone-row">
+                <span class="zone-name">Roma Norte</span>
+                <div class="zone-bar-wrap"><div class="zone-bar" style="width:19%"></div></div>
+                <span class="zone-pct eco-only">8%</span>
+              </div>
+              <div class="zone-row eco-only">
+                <span class="zone-name">Mérida</span>
+                <div class="zone-bar-wrap"><div class="zone-bar" style="width:17%"></div></div>
+                <span class="zone-pct eco-only">7%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rango de precio — solo eco -->
+          <div class="spec-section eco-only">
+            <div class="spec-label">Rango de precio habitual</div>
+            <div class="price-visual">
+              <div class="price-scale">
+                <span>$500K</span><span>$5M</span><span>$10M+</span>
+              </div>
+              <div class="price-track">
+                <div class="price-fill" style="left:8%;width:54%"></div>
+                <div class="price-avg-marker" style="left:36%"></div>
+              </div>
+              <div class="price-avg-row">
+                <span class="price-avg-label">Precio promedio de su portafolio:</span>
+                <span class="price-avg-val">$3,200,000 MXN</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tipo de operación — solo eco -->
+          <div class="spec-section eco-only">
+            <div class="spec-label">Tipo de operación</div>
+            <div class="ops-row" style="margin-bottom:8px">
+              <div class="ops-bar-wrap">
+                <div class="ops-seg v" style="width:65%"></div>
+                <div class="ops-seg r" style="width:35%"></div>
+              </div>
+            </div>
+            <div class="ops-legend">
+              <div class="ops-item"><div class="ops-dot v"></div>Venta — 65%</div>
+              <div class="ops-item"><div class="ops-dot r"></div>Renta — 35%</div>
+            </div>
+          </div>
+
+          <!-- Datos de contexto -->
+          <div class="spec-section">
+            <div class="spec-label">Perfil</div>
+            <div class="meta-row">
+              <span class="meta-pill">8 años de experiencia</span>
+              <span class="meta-pill">Español · Inglés básico</span>
+              <span class="meta-pill">Casas y departamentos</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- EQUIPO — solo agencia -->
+      <div class="card agency-only">
+        <div class="card-head"><h3>Equipo</h3></div>
+        <div class="card-body">
+          <div class="team-grid">
+            <div class="team-card">
+              <div class="team-av">MC</div>
+              <div class="team-name">María Calderón</div>
+              <div class="team-role">Directora</div>
+              <div class="team-stat"><b>38</b> propiedades</div>
+            </div>
+            <div class="team-card">
+              <div class="team-av">LR</div>
+              <div class="team-name">Luis Ramírez</div>
+              <div class="team-role">Asesor Senior</div>
+              <div class="team-stat"><b>29</b> propiedades</div>
+            </div>
+            <div class="team-card">
+              <div class="team-av">AG</div>
+              <div class="team-name">Ana García</div>
+              <div class="team-role">Asesora</div>
+              <div class="team-stat"><b>22</b> propiedades</div>
+            </div>
+            <div class="team-card">
+              <div class="team-av">JP</div>
+              <div class="team-name">Jorge Paredes</div>
+              <div class="team-role">Asesor</div>
+              <div class="team-stat"><b>20</b> propiedades</div>
+            </div>
+            <div class="team-card">
+              <div class="team-av">VM</div>
+              <div class="team-name">Valeria Mora</div>
+              <div class="team-role">Asesora Junior</div>
+              <div class="team-stat"><b>15</b> propiedades</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOBRE LA AGENCIA — solo agencia -->
+      <div class="card agency-only">
+        <div class="card-head"><h3>Sobre la agencia</h3></div>
+        <div class="card-body">
+          <div class="about-row">
+            <div class="about-item">
+              <span class="about-lbl">Fundada</span>
+              <span class="about-val">2019 · 6 años en el mercado</span>
+            </div>
+            <div class="about-item">
+              <span class="about-lbl">Especialidad</span>
+              <span class="about-val">Residencial y oficinas en CDMX</span>
+            </div>
+            <div class="about-item">
+              <span class="about-lbl">Certificación</span>
+              <span class="about-val">AMPI · Asociación Mexicana de Profesionales Inmobiliarios</span>
+            </div>
+            <div class="about-item">
+              <span class="about-lbl">Idiomas</span>
+              <span class="about-val">Español · Inglés</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROPIEDADES -->
+      <div class="card">
+        <div class="card-head">
+          <h3>Propiedades <span class="count" id="p-count">(24)</span></h3>
+          <a href="#">Ver todas</a>
+        </div>
+        <div class="card-body">
+          <div class="prop-filters">
+            <button class="pf on">Todos</button>
+            <button class="pf">Venta</button>
+            <button class="pf">Renta</button>
+            <button class="pf">Casa</button>
+            <button class="pf">Depto</button>
+          </div>
+          <div class="prop-grid">
+            <div class="prop-card">
+              <div class="pc-img v1"><span class="op-label venta">Venta</span></div>
+              <div class="pc-body">
+                <div class="pc-price">$3,200,000</div>
+                <div class="pc-meta">Departamento · Condesa</div>
+                <div class="pc-attrs"><span>3 rec</span><span>2 baños</span><span>1 cajón</span></div>
+              </div>
+            </div>
+            <div class="prop-card">
+              <div class="pc-img v2"><span class="op-label renta">Renta</span></div>
+              <div class="pc-body">
+                <div class="pc-price">$22,000 <span class="pc-price-unit">/mes</span></div>
+                <div class="pc-meta">Departamento · Polanco</div>
+                <div class="pc-attrs"><span>2 rec</span><span>1 baño</span></div>
+              </div>
+            </div>
+            <div class="prop-card">
+              <div class="pc-img v3"><span class="op-label venta">Venta</span></div>
+              <div class="pc-body">
+                <div class="pc-price">$5,800,000</div>
+                <div class="pc-meta">Casa · Coyoacán</div>
+                <div class="pc-attrs"><span>4 rec</span><span>3 baños</span><span>2 cajones</span></div>
+              </div>
+            </div>
+            <div class="prop-card eco-only">
+              <div class="pc-img v4"><span class="op-label renta">Renta</span></div>
+              <div class="pc-body">
+                <div class="pc-price">$18,200 <span class="pc-price-unit">/mes</span></div>
+                <div class="pc-meta">Departamento · Mérida</div>
+                <div class="pc-attrs"><span>2 rec</span><span>2 baños</span></div>
+              </div>
+            </div>
+            <div class="prop-card eco-only">
+              <div class="pc-img v5"><span class="op-label venta">Venta</span></div>
+              <div class="pc-body">
+                <div class="pc-price">$2,850,000</div>
+                <div class="pc-meta">Oficina · Roma Norte</div>
+                <div class="pc-attrs"><span>85 m²</span></div>
+              </div>
+            </div>
+            <div class="prop-card eco-only">
+              <div class="pc-img v6"><span class="op-label venta">Venta</span></div>
+              <div class="pc-body">
+                <div class="pc-price">$4,100,000</div>
+                <div class="pc-meta">Casa · Tlalpan</div>
+                <div class="pc-attrs"><span>3 rec</span><span>2 baños</span><span>2 cajones</span></div>
+              </div>
+            </div>
+          </div>
+          <button class="show-more" id="sm-btn">Ver más propiedades (21 restantes)</button>
+        </div>
+      </div>
+
+      <!-- SERVICIOS — solo eco -->
+      <div class="card eco-only">
+        <div class="card-head"><h3>Servicios</h3></div>
+        <div class="card-body">
+          <div class="services-list">
+            <div class="srv"><span class="srv-name">Búsqueda personalizada</span><span class="srv-desc">Propiedades según tu perfil y necesidades</span></div>
+            <div class="srv"><span class="srv-name">Asesoría en escrituración</span><span class="srv-desc">Acompañamiento en trámites notariales</span></div>
+            <div class="srv"><span class="srv-name">Crédito hipotecario</span><span class="srv-desc">Orientación con bancos e INFONAVIT</span></div>
+            <div class="srv"><span class="srv-name">Valuación de inmuebles</span><span class="srv-desc">Precio justo según mercado actual</span></div>
+            <div class="srv"><span class="srv-name">Negociación</span><span class="srv-desc">Representación de tus intereses</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATOS PRÓXIMOS — solo eco, sin ruido -->
+      <div class="card eco-only">
+        <div class="card-head"><h3>Historial de operaciones</h3></div>
+        <div class="card-body" style="padding-top:0;padding-bottom:0">
+          <div class="upcoming-row">
+            <span class="upcoming-name">Ventas cerradas</span>
+            <span class="upcoming-val">disponible próximamente</span>
+          </div>
+          <div class="upcoming-row">
+            <span class="upcoming-name">Colaboraciones</span>
+            <span class="upcoming-val">disponible próximamente</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- JOIN — solo ext -->
+      <div class="join-block ext-only">
+        <h4>¿Eres Juan Rodríguez?</h4>
+        <p>Registra tu cuenta en Monopolio Asesores y obtén un perfil completo con estadísticas, tasa de respuesta y más herramientas para cerrar operaciones.</p>
+        <button>Unirme al ecosistema</button>
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <div>
+
+      <!-- CONTACTAR -->
+      <div class="sidebar-card">
+        <div class="sc-body">
+          <button class="cta-wa">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+            Escribir por WhatsApp
+          </button>
+          <button class="cta-call">Llamar</button>
+          <button class="cta-mail eco-only" style="display:none">Correo electrónico</button>
+        </div>
+
+        <!-- Tasa de respuesta — solo eco -->
+        <div class="resp-section eco-only">
+          <div class="resp-row">
+            <span class="resp-label">Tasa de respuesta</span>
+            <span class="resp-value">92%</span>
+          </div>
+          <div class="resp-track"><div class="resp-fill" style="width:92%"></div></div>
+          <div class="resp-sub">Responde en menos de 2 horas</div>
+        </div>
+      </div>
+
+      <!-- DISPONIBILIDAD — solo eco -->
+      <div class="sidebar-card eco-only">
+        <div class="sc-header">Disponibilidad</div>
+        <div class="sc-body">
+          <div class="avail-row">
+            <div class="avail-dot"></div>
+            <span class="avail-text">Disponible ahora</span>
+          </div>
+          <div class="avail-hours">Lun–Sáb · 9:00 am – 7:00 pm</div>
+          <div class="day-row">
+            <div class="day on">L</div>
+            <div class="day on">M</div>
+            <div class="day on">X</div>
+            <div class="day on">J</div>
+            <div class="day on">V</div>
+            <div class="day on">S</div>
+            <div class="day">D</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACTO DETALLE — solo eco -->
+      <div class="sidebar-card eco-only">
+        <div class="sc-header">Contacto</div>
+        <div class="sc-body" style="padding-top:0;padding-bottom:0">
+          <div class="contact-row">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor" style="color:#22C55E"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+            </div>
+            <div>
+              <div class="contact-label">WhatsApp</div>
+              <div class="contact-val">+52 55 7314 1015</div>
+            </div>
+          </div>
+          <div class="contact-row">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--n-500)"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.22 2.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            </div>
+            <div>
+              <div class="contact-label">Teléfono agencia</div>
+              <div class="contact-val">+52 55 7155 4758</div>
+            </div>
+          </div>
+          <div class="contact-row">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--n-500)"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <div class="contact-label">Correo</div>
+              <div class="contact-val" style="font-size:11px">maria@marcainmobiliaria.mx</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VERIFICACIONES — solo eco -->
+      <div class="sidebar-card eco-only">
+        <div class="sc-header">Verificaciones</div>
+        <div class="sc-body" style="padding-top:0;padding-bottom:0">
+          <div class="verif-row">
+            <div class="verif-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div class="verif-name">Identidad verificada</div>
+              <div class="verif-desc">INE / Cédula profesional</div>
+            </div>
+          </div>
+          <div class="verif-row">
+            <div class="verif-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div class="verif-name">Agencia registrada</div>
+              <div class="verif-desc">MarCa Inmobiliaria · 6 años</div>
+            </div>
+          </div>
+          <div class="verif-row">
+            <div class="verif-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div class="verif-name">Certificaciones</div>
+              <span class="cert-tag">AMPI</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center;padding:8px 0">
+        <a href="#" style="font-size:11px;color:var(--n-400);text-decoration:none">Reportar perfil</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+var data = {
+  ext:    { cls:'ext',    av:'JR', avVerif:false, name:'Juan Rodríguez',      role:'Agente Independiente',  bc:'Juan Rodríguez',      pc:'(24)',  sm:'21 restantes',  zonesLabel:'Opera en' },
+  eco:    { cls:'eco',    av:'MC', avVerif:true,  name:'María Calderón',       role:'Directora de Agencia',  bc:'María Calderón',      pc:'(124)', sm:'118 restantes', zonesLabel:'Opera en' },
+  agency: { cls:'agency', av:'M',  avVerif:false, name:'MarCa Inmobiliaria',   role:'Agencia Inmobiliaria',  bc:'MarCa Inmobiliaria',  pc:'(124)', sm:'121 restantes', zonesLabel:'Zonas de operación' }
+};
+function setVariant(k, btn) {
+  var d = data[k];
+  document.body.className = d.cls;
+  var av = document.getElementById('av');
+  av.innerHTML = d.av;
+  av.className = 'avatar' + (d.avVerif ? ' verified' : '');
+  if (d.avVerif) {
+    var dot = document.createElement('div'); dot.className = 'v-dot';
+    dot.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+    av.appendChild(dot);
+  }
+  document.getElementById('h-name').textContent = d.name;
+  document.getElementById('h-role').textContent = d.role;
+  document.getElementById('bc').textContent = d.bc;
+  document.getElementById('p-count').textContent = d.pc;
+  document.getElementById('sm-btn').textContent = 'Ver más propiedades (' + d.sm + ')';
+  document.getElementById('zones-label').textContent = d.zonesLabel;
+  document.querySelectorAll('.vs-btn').forEach(function(b){ b.classList.remove('on'); });
+  btn.classList.add('on');
+  document.querySelectorAll('.pf').forEach(function(b,i){ b.classList.toggle('on', i===0); });
+}
+document.querySelectorAll('.pf').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.pf').forEach(function(b){ b.classList.remove('on'); });
+    btn.classList.add('on');
+  });
+});
+</script>
+</body>
+</html>

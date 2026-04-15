@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Monopolio — Ficha de Asesor · Variantes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+/* ── DESIGN TOKENS ── */
+:root {
+  --blue-600: #1D4ED8;
+  --blue-700: #1E40AF;
+  --blue-50:  #EFF6FF;
+  --blue-100: #DBEAFE;
+  --green-500: #10B981;
+  --green-600: #059669;
+  --green-50:  #ECFDF5;
+  --n-900: #111827;
+  --n-700: #374151;
+  --n-500: #6B7280;
+  --n-400: #9CA3AF;
+  --n-300: #D1D5DB;
+  --n-200: #E5E7EB;
+  --n-100: #F3F4F6;
+  --n-50:  #F9FAFB;
+  --white: #FFFFFF;
+
+  /* Hero backgrounds */
+  --hero-ext: #1F2937;
+  --hero-eco: #1A3460;
+
+  /* Typography */
+  --text-xs:   11px;
+  --text-sm:   12px;
+  --text-base: 13px;
+  --text-md:   15px;
+  --text-lg:   18px;
+
+  /* Spacing (4px grid) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+
+  /* Radii */
+  --r-sm:   6px;
+  --r-md:   10px;
+  --r-lg:   14px;
+  --r-full: 9999px;
+
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #E8EEF5;
+  color: var(--n-900);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── PROTOTYPE CHROME ── */
+.page-header {
+  background: #0A1628;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo { color: #3B82F6; font-size: 15px; font-weight: 800; letter-spacing: -.4px; }
+.page-header h1 { color: rgba(255,255,255,.6); font-size: var(--text-sm); font-weight: 500; }
+.page-header .sep { color: rgba(255,255,255,.2); font-size: 14px; }
+
+.view-tabs {
+  background: var(--white);
+  border-bottom: 1px solid var(--n-200);
+  display: flex;
+  gap: 2px;
+  padding: 8px 20px;
+}
+.vtab {
+  padding: 6px 14px;
+  border-radius: var(--r-full);
+  border: none;
+  font-size: var(--text-base);
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  color: var(--n-500);
+  transition: all .15s;
+  font-family: inherit;
+}
+.vtab.on { background: var(--blue-600); color: white; }
+.vtab:hover:not(.on) { background: var(--n-100); color: var(--n-700); }
+
+.view { display: none; padding: 36px 24px; }
+.view.on { display: block; }
+
+/* Variant comparison layout */
+.sec-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--n-400);
+  text-align: center;
+  margin-bottom: 20px;
+}
+.variants-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 820px;
+  margin: 0 auto 6px;
+}
+.vh-item { text-align: center; }
+.vh-title { font-size: var(--text-base); font-weight: 700; color: var(--n-700); }
+.vh-sub   { font-size: var(--text-xs); color: var(--n-400); margin-top: 3px; }
+.vh-item.eco .vh-title { color: var(--blue-600); }
+
+.variants-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 820px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* ══════════════════════════════════════
+   PANEL LATERAL — sidebar on listing
+   ══════════════════════════════════════ */
+.panel {
+  background: var(--white);
+  border: 1px solid var(--n-200);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* Hero */
+.panel-hero {
+  padding: 20px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+.panel-hero.ext { background: var(--hero-ext); }
+.panel-hero.eco { background: var(--hero-eco); }
+
+.p-avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700; color: white;
+  position: relative;
+  flex-shrink: 0;
+}
+.p-avatar.eco { border: 2px solid rgba(255,255,255,.2); }
+
+.p-avatar .check-dot {
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: var(--green-500);
+  border: 2px solid var(--hero-eco);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.p-name { color: white; font-size: var(--text-md); font-weight: 700; line-height: 1.2; }
+.p-type { color: rgba(255,255,255,.5); font-size: var(--text-xs); font-weight: 500; }
+
+.p-agency-pill {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,.09);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--r-full);
+  padding: 3px 10px;
+  color: rgba(255,255,255,.78); font-size: var(--text-xs); font-weight: 500;
+}
+
+/* Zones (eco only) */
+.p-zones-block {
+  padding: 12px 14px 0;
+  border-top: 1px solid var(--n-100);
+}
+.p-zones-lbl {
+  font-size: 10px;
+  color: var(--n-400);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 6px;
+}
+.p-zones-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.pzt {
+  font-size: var(--text-xs); font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--r-full);
+  background: var(--blue-50);
+  color: var(--blue-600);
+  border: 1px solid var(--blue-100);
+}
+
+/* Stats grid */
+.p-stats {
+  display: grid;
+  gap: 1px;
+  background: var(--n-200);
+  border-top: 1px solid var(--n-200);
+  margin-top: 12px;
+}
+.p-stats.s2 { grid-template-columns: 1fr 1fr; }
+.p-stats.s3 { grid-template-columns: repeat(3, 1fr); }
+
+.ps-cell {
+  background: var(--white);
+  padding: 10px 8px;
+  text-align: center;
+}
+.ps-val {
+  display: block;
+  font-size: 20px; font-weight: 800; color: var(--blue-600);
+  line-height: 1;
+}
+.ps-val.muted { color: var(--n-300); font-size: var(--text-md); }
+.ps-lbl {
+  display: block;
+  font-size: 9px; font-weight: 600; color: var(--n-500);
+  text-transform: uppercase; letter-spacing: .4px; margin-top: 3px;
+}
+.ps-soon {
+  display: block;
+  font-size: 9px; color: var(--n-400); font-style: italic; margin-top: 1px;
+}
+
+/* Response bar (eco only) */
+.p-resp {
+  padding: 10px 14px 0;
+  border-top: 1px solid var(--n-100);
+}
+.pr-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 5px;
+}
+.pr-lbl { font-size: var(--text-xs); color: var(--n-500); font-weight: 500; }
+.pr-val { font-size: var(--text-xs); font-weight: 700; color: var(--green-600); }
+.pr-bar { height: 3px; background: var(--n-200); border-radius: var(--r-full); }
+.pr-fill { height: 3px; background: var(--green-500); border-radius: var(--r-full); }
+.pr-sub { font-size: 10px; color: var(--n-400); margin-top: 4px; }
+
+/* CTAs */
+.p-ctas { padding: 12px 12px 12px; display: flex; flex-direction: column; gap: 6px; }
+
+.btn-wa {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: #25D366; color: white; border: none; border-radius: var(--r-md);
+  padding: 10px; width: 100%; font-size: var(--text-base); font-weight: 600;
+  cursor: pointer; font-family: inherit; transition: opacity .15s;
+}
+.btn-wa:hover { opacity: .88; }
+
+.btn-call {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: white; color: var(--blue-600);
+  border: 1.5px solid var(--n-200); border-radius: var(--r-md);
+  padding: 9px; width: 100%; font-size: var(--text-base); font-weight: 600;
+  cursor: pointer; font-family: inherit; transition: background .15s;
+}
+.btn-call:hover { background: var(--n-50); }
+
+/* Footer link */
+.p-link {
+  display: block; text-align: center; padding: 10px;
+  border-top: 1px solid var(--n-200);
+  font-size: var(--text-sm); color: var(--blue-600);
+  font-weight: 500; text-decoration: none; background: var(--n-50);
+}
+.p-link:hover { text-decoration: underline; }
+
+
+/* ══════════════════════════════════════
+   PÁGINA COMPLETA — side-by-side
+   ══════════════════════════════════════ */
+.profile-card {
+  background: var(--white);
+  border: 1px solid var(--n-200);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* Hero */
+.pr-hero { padding: 22px 20px 18px; }
+.pr-hero.ext { background: var(--hero-ext); }
+.pr-hero.eco { background: var(--hero-eco); }
+
+.pr-hero-top { display: flex; align-items: flex-start; gap: 14px; }
+
+.pr-avatar {
+  width: 60px; height: 60px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(255,255,255,.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700; color: white; position: relative;
+}
+.pr-avatar.eco { border: 2px solid rgba(255,255,255,.18); }
+.pr-avatar .vdot {
+  position: absolute; bottom: 0; right: 0;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--green-500); border: 2px solid var(--hero-eco);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.pr-info { flex: 1; padding-top: 2px; }
+.pr-name { color: white; font-size: var(--text-lg); font-weight: 800; line-height: 1.2; }
+
+.pr-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.pr-role-pill {
+  background: rgba(255,255,255,.11); color: rgba(255,255,255,.9);
+  font-size: var(--text-xs); font-weight: 600; padding: 3px 9px;
+  border-radius: var(--r-full);
+}
+
+.pr-agency-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.pr-agency-mark {
+  width: 22px; height: 22px; border-radius: 5px;
+  background: rgba(255,255,255,.14);
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--text-xs); font-weight: 800; color: white;
+}
+.pr-agency-name { color: rgba(255,255,255,.85); font-size: var(--text-sm); font-weight: 600; }
+.pr-agency-loc  { color: rgba(255,255,255,.4); font-size: var(--text-xs); margin-left: 4px; }
+
+/* Hero zones (eco) */
+.pr-zones { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 12px; }
+.prz {
+  font-size: var(--text-xs); font-weight: 500; padding: 3px 8px;
+  border-radius: var(--r-full);
+  background: rgba(255,255,255,.1);
+  color: rgba(255,255,255,.75);
+  border: 1px solid rgba(255,255,255,.1);
+}
+.prz.primary { background: rgba(255,255,255,.18); color: white; border-color: rgba(255,255,255,.22); }
+
+/* Hero CTAs */
+.pr-ctas { display: flex; gap: 6px; margin-top: 18px; flex-wrap: wrap; }
+.pr-btn-wa {
+  display: flex; align-items: center; gap: 5px;
+  background: #25D366; color: white; border: none; border-radius: var(--r-md);
+  padding: 8px 14px; font-size: var(--text-sm); font-weight: 600;
+  cursor: pointer; font-family: inherit;
+}
+.pr-btn-call {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,.1); color: rgba(255,255,255,.88);
+  border: 1px solid rgba(255,255,255,.18); border-radius: var(--r-md);
+  padding: 8px 12px; font-size: var(--text-sm); font-weight: 600;
+  cursor: pointer; font-family: inherit;
+}
+
+/* Stats strip */
+.pr-stats {
+  display: grid; gap: 1px; background: var(--n-200);
+  border-bottom: 1px solid var(--n-200);
+}
+.pr-stats.s2 { grid-template-columns: 1fr 1fr; }
+.pr-stats.s5 { grid-template-columns: repeat(5, 1fr); }
+
+.prs-cell { background: var(--white); padding: 14px 10px; text-align: center; }
+.prs-val {
+  display: block; font-size: 20px; font-weight: 800; color: var(--blue-600);
+}
+.prs-val.muted { color: var(--n-300); font-size: var(--text-md); }
+.prs-lbl {
+  display: block; font-size: 9px; font-weight: 600; color: var(--n-500);
+  text-transform: uppercase; letter-spacing: .4px; margin-top: 3px;
+}
+.prs-soon {
+  display: block; font-size: 9px; color: var(--n-400); font-style: italic; margin-top: 1px;
+}
+
+/* Body */
+.pr-body { padding: 16px 14px; }
+
+/* Section */
+.card-sec { margin-bottom: 18px; }
+.card-sec:last-child { margin-bottom: 0; }
+.cs-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.cs-head h3 { font-size: var(--text-base); font-weight: 700; }
+.cs-head a  { font-size: var(--text-xs); color: var(--blue-600); text-decoration: none; font-weight: 500; }
+
+/* Property cards */
+.prop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.prop-item {
+  border: 1px solid var(--n-200); border-radius: var(--r-md); overflow: hidden; cursor: pointer;
+}
+.prop-img {
+  height: 68px; background: linear-gradient(135deg, #bfcfe3 0%, #9ab2cb 100%);
+  position: relative;
+}
+.op-pill {
+  position: absolute; top: 5px; left: 5px;
+  font-size: 9px; font-weight: 700; padding: 2px 6px;
+  border-radius: var(--r-full); text-transform: uppercase;
+}
+.op-pill.v { background: var(--blue-600); color: white; }
+.op-pill.r { background: var(--green-500); color: white; }
+.prop-data { padding: 7px 8px; }
+.prop-price { font-size: var(--text-sm); font-weight: 700; }
+.prop-loc   { font-size: 10px; color: var(--n-500); margin-top: 2px; }
+.prop-more {
+  border: 1px solid var(--n-200); border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  gap: 2px; min-height: 96px; color: var(--n-400);
+}
+.prop-more .pm-n { font-size: 17px; font-weight: 800; }
+.prop-more .pm-t { font-size: 10px; }
+
+/* Zone specialization bars */
+.spec-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.spec-lbl { font-size: var(--text-xs); color: var(--n-500); width: 56px; flex-shrink: 0; }
+.spec-wrap { flex: 1; height: 4px; background: var(--n-200); border-radius: var(--r-full); }
+.spec-fill { height: 4px; border-radius: var(--r-full); background: var(--blue-600); }
+.spec-pct  { font-size: var(--text-xs); color: var(--n-700); font-weight: 600; width: 28px; text-align: right; }
+
+/* Agency block */
+.agency-row {
+  background: var(--n-50); border: 1px solid var(--n-200);
+  border-radius: var(--r-md); padding: 12px; display: flex; gap: 10px; align-items: flex-start;
+}
+.ag-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--blue-50); border: 1px solid var(--blue-100);
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--text-sm); font-weight: 800; color: var(--blue-600); flex-shrink: 0;
+}
+.ag-name { font-size: var(--text-sm); font-weight: 700; }
+.ag-meta { font-size: var(--text-xs); color: var(--n-500); margin-top: 2px; display: flex; align-items: center; gap: 3px; }
+.ag-stats { display: flex; gap: 10px; margin-top: 6px; }
+.ag-stat  { font-size: var(--text-xs); color: var(--n-500); }
+.ag-stat b { color: var(--blue-600); font-weight: 700; }
+
+/* Verifications */
+.verif-list { display: flex; flex-direction: column; }
+.verif-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid var(--n-100);
+}
+.verif-item:last-child { border-bottom: none; }
+.verif-icon {
+  width: 26px; height: 26px; border-radius: var(--r-sm);
+  background: var(--green-50); border: 1px solid #A7F3D0;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.vt-title { font-size: var(--text-xs); font-weight: 700; display: block; }
+.vt-sub   { font-size: var(--text-xs); color: var(--n-500); }
+
+/* Coming metrics (no noise) */
+.coming-list { display: flex; flex-direction: column; }
+.coming-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0; border-bottom: 1px solid var(--n-100);
+}
+.coming-row:last-child { border-bottom: none; }
+.coming-name { font-size: var(--text-xs); color: var(--n-700); font-weight: 500; }
+.coming-soon { font-size: var(--text-xs); color: var(--n-400); font-style: italic; }
+
+/* Join CTA (ext only) */
+.join-cta {
+  background: var(--n-50); border: 1px solid var(--n-200);
+  border-radius: var(--r-md); padding: 16px; text-align: center;
+}
+.join-cta h4 { font-size: var(--text-base); font-weight: 700; color: var(--n-900); }
+.join-cta p  { font-size: var(--text-xs); color: var(--n-500); margin-top: 5px; line-height: 1.5; }
+.jc-btn {
+  display: inline-block; margin-top: 12px; background: var(--blue-600); color: white;
+  border: none; border-radius: var(--r-md); padding: 8px 18px;
+  font-size: var(--text-sm); font-weight: 600; cursor: pointer; font-family: inherit;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 720px) {
+  .variants-row, .variants-header { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <span class="logo">Monopolio</span>
+  <span class="sep">›</span>
+  <h1>Propuesta — Ficha de Asesor · 2 Variantes</h1>
+</div>
+
+<div class="view-tabs">
+  <button class="vtab on" onclick="showView('panel')">Panel Lateral</button>
+  <button class="vtab" onclick="showView('perfil')">Página de Perfil Completa</button>
+</div>
+
+
+<!-- ══════════════════════════════
+     VISTA 1: PANEL LATERAL
+     ══════════════════════════════ -->
+<div class="view on" id="view-panel">
+  <p class="sec-label">Panel fijo — lateral derecho en ficha de propiedad</p>
+
+  <div class="variants-header">
+    <div class="vh-item">
+      <div class="vh-title">Variante A — Asesor Externo</div>
+      <div class="vh-sub">Sin cuenta en Monopolio Asesores</div>
+    </div>
+    <div class="vh-item eco">
+      <div class="vh-title">Variante B — Asesor Monopolio</div>
+      <div class="vh-sub">Registrado en el ecosistema</div>
+    </div>
+  </div>
+
+  <div class="variants-row">
+
+    <!-- ─ PANEL A: EXTERNO ─ -->
+    <div class="panel">
+
+      <div class="panel-hero ext">
+        <div class="p-avatar">JR</div>
+        <div class="p-name">Juan Rodríguez</div>
+        <div class="p-type">Agente Independiente</div>
+      </div>
+
+      <!-- Stats -->
+      <div class="p-stats s2">
+        <div class="ps-cell">
+          <span class="ps-val">24</span>
+          <span class="ps-lbl">Propiedades</span>
+        </div>
+        <div class="ps-cell">
+          <span class="ps-val">CDMX</span>
+          <span class="ps-lbl" style="font-size:8px">Zona principal</span>
+        </div>
+      </div>
+
+      <!-- CTAs -->
+      <div class="p-ctas">
+        <button class="btn-wa">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884"/></svg>
+          Escribir por WhatsApp
+        </button>
+        <button class="btn-call">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.22 2.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          Llamar
+        </button>
+      </div>
+
+      <a href="#" class="p-link">Ver perfil completo →</a>
+    </div>
+
+    <!-- ─ PANEL B: ECOSISTEMA ─ -->
+    <div class="panel">
+
+      <div class="panel-hero eco">
+        <div class="p-avatar eco">
+          MC
+          <div class="check-dot">
+            <svg width="7" height="7" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>
+          </div>
+        </div>
+        <div class="p-name">María Calderón</div>
+        <div class="p-agency-pill">MarCa Inmobiliaria · Directora</div>
+      </div>
+
+      <!-- Zones — critical decision info -->
+      <div class="p-zones-block">
+        <div class="p-zones-lbl">Opera en</div>
+        <div class="p-zones-tags">
+          <span class="pzt">Coyoacán</span>
+          <span class="pzt">Polanco</span>
+          <span class="pzt">Condesa</span>
+          <span class="pzt">Xochimilco</span>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="p-stats s3">
+        <div class="ps-cell">
+          <span class="ps-val">124</span>
+          <span class="ps-lbl">Propiedades</span>
+        </div>
+        <div class="ps-cell">
+          <span class="ps-val">5</span>
+          <span class="ps-lbl">Equipo</span>
+        </div>
+        <div class="ps-cell">
+          <span class="ps-val">92%</span>
+          <span class="ps-lbl">Respuesta</span>
+        </div>
+      </div>
+
+      <!-- Response bar -->
+      <div class="p-resp">
+        <div class="pr-row">
+          <span class="pr-lbl">Tasa de respuesta</span>
+          <span class="pr-val">92% · Alta</span>
+        </div>
+        <div class="pr-bar"><div class="pr-fill" style="width:92%"></div></div>
+        <div class="pr-sub">Responde en menos de 2 horas</div>
+      </div>
+
+      <!-- CTAs -->
+      <div class="p-ctas">
+        <button class="btn-wa">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884"/></svg>
+          Escribir por WhatsApp
+        </button>
+        <button class="btn-call">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.22 2.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          Llamar
+        </button>
+      </div>
+
+      <a href="#" class="p-link">Ver perfil completo →</a>
+    </div>
+
+  </div><!-- /variants-row -->
+</div>
+
+
+<!-- ══════════════════════════════
+     VISTA 2: PÁGINA COMPLETA
+     ══════════════════════════════ -->
+<div class="view" id="view-perfil">
+  <p class="sec-label">Página de perfil completa — dos variantes de la misma ficha</p>
+
+  <div class="variants-header">
+    <div class="vh-item">
+      <div class="vh-title">Variante A — Asesor Externo</div>
+      <div class="vh-sub">Información básica disponible</div>
+    </div>
+    <div class="vh-item eco">
+      <div class="vh-title">Variante B — Asesor Monopolio</div>
+      <div class="vh-sub">Perfil enriquecido del ecosistema</div>
+    </div>
+  </div>
+
+  <div class="variants-row">
+
+    <!-- ─ PERFIL A: EXTERNO ─ -->
+    <div class="profile-card">
+
+      <div class="pr-hero ext">
+        <div class="pr-hero-top">
+          <div class="pr-avatar">JR</div>
+          <div class="pr-info">
+            <div class="pr-name">Juan Rodríguez</div>
+            <div class="pr-meta">
+              <span class="pr-role-pill">Agente Independiente</span>
+            </div>
+            <div style="margin-top:8px; display:flex; align-items:center; gap:4px; color:rgba(255,255,255,.45); font-size:var(--text-xs)">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Ciudad de México
+            </div>
+          </div>
+        </div>
+        <div class="pr-ctas">
+          <button class="pr-btn-wa">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884"/></svg>
+            WhatsApp
+          </button>
+          <button class="pr-btn-call">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.22 2.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            Llamar
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats A -->
+      <div class="pr-stats s2">
+        <div class="prs-cell">
+          <span class="prs-val">24</span>
+          <span class="prs-lbl">Propiedades</span>
+        </div>
+        <div class="prs-cell">
+          <span class="prs-val">6</span>
+          <span class="prs-lbl">Años activo</span>
+        </div>
+      </div>
+
+      <div class="pr-body">
+
+        <!-- Propiedades -->
+        <div class="card-sec">
+          <div class="cs-head">
+            <h3>Propiedades (24)</h3>
+            <a href="#">Ver todas →</a>
+          </div>
+          <div class="prop-grid">
+            <div class="prop-item">
+              <div class="prop-img"><span class="op-pill v">Venta</span></div>
+              <div class="prop-data">
+                <div class="prop-price">$3,200,000</div>
+                <div class="prop-loc">Depto · Condesa</div>
+              </div>
+            </div>
+            <div class="prop-item">
+              <div class="prop-img"><span class="op-pill r">Renta</span></div>
+              <div class="prop-data">
+                <div class="prop-price">$22,000/mes</div>
+                <div class="prop-loc">Depto · Polanco</div>
+              </div>
+            </div>
+            <div class="prop-more">
+              <span class="pm-n">+22</span>
+              <span class="pm-t">más propiedades</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA unirse -->
+        <div class="join-cta">
+          <h4>¿Eres este asesor?</h4>
+          <p>Únete a Monopolio y enriquece tu perfil con estadísticas, historial y más.</p>
+          <button class="jc-btn">Unirme al ecosistema →</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ─ PERFIL B: ECOSISTEMA ─ -->
+    <div class="profile-card">
+
+      <div class="pr-hero eco">
+        <div class="pr-hero-top">
+          <div class="pr-avatar eco">
+            MC
+            <div class="vdot">
+              <svg width="7" height="7" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>
+            </div>
+          </div>
+          <div class="pr-info">
+            <div class="pr-name">María Calderón</div>
+            <div class="pr-meta">
+              <span class="pr-role-pill">Directora de Agencia</span>
+            </div>
+            <div class="pr-agency-row">
+              <div class="pr-agency-mark">M</div>
+              <div>
+                <span class="pr-agency-name">MarCa Inmobiliaria</span>
+                <span class="pr-agency-loc">· Coyoacán, CDMX</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zones in hero — reduces "does this advisor know my area?" uncertainty immediately -->
+        <div class="pr-zones">
+          <span class="prz primary">Coyoacán</span>
+          <span class="prz primary">Polanco</span>
+          <span class="prz">Condesa</span>
+          <span class="prz">Xochimilco</span>
+          <span class="prz">Del Valle</span>
+        </div>
+
+        <div class="pr-ctas">
+          <button class="pr-btn-wa">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884"/></svg>
+            WhatsApp
+          </button>
+          <button class="pr-btn-call">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.22 2.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.28-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            Llamar
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats B — 5 cells, upcoming data muted without visual noise -->
+      <div class="pr-stats s5">
+        <div class="prs-cell">
+          <span class="prs-val">124</span>
+          <span class="prs-lbl">Propiedades</span>
+        </div>
+        <div class="prs-cell">
+          <span class="prs-val">5</span>
+          <span class="prs-lbl">Equipo</span>
+        </div>
+        <div class="prs-cell">
+          <span class="prs-val">92%</span>
+          <span class="prs-lbl">Respuesta</span>
+        </div>
+        <div class="prs-cell">
+          <span class="prs-val muted">—</span>
+          <span class="prs-lbl">Ventas</span>
+          <span class="prs-soon">próximamente</span>
+        </div>
+        <div class="prs-cell">
+          <span class="prs-val muted">—</span>
+          <span class="prs-lbl">Colabor.</span>
+          <span class="prs-soon">próximamente</span>
+        </div>
+      </div>
+
+      <div class="pr-body">
+
+        <!-- Propiedades -->
+        <div class="card-sec">
+          <div class="cs-head">
+            <h3>Propiedades (124)</h3>
+            <a href="#">Ver todas →</a>
+          </div>
+          <div class="prop-grid">
+            <div class="prop-item">
+              <div class="prop-img"><span class="op-pill v">Venta</span></div>
+              <div class="prop-data">
+                <div class="prop-price">$4,100,000</div>
+                <div class="prop-loc">Casa · Coyoacán</div>
+              </div>
+            </div>
+            <div class="prop-item">
+              <div class="prop-img"><span class="op-pill r">Renta</span></div>
+              <div class="prop-data">
+                <div class="prop-price">$18,200/mes</div>
+                <div class="prop-loc">Depto · Polanco</div>
+              </div>
+            </div>
+            <div class="prop-more">
+              <span class="pm-n">+122</span>
+              <span class="pm-t">más propiedades</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Especialización por zona -->
+        <div class="card-sec">
+          <div class="cs-head"><h3>Actividad por zona</h3></div>
+          <div class="spec-row">
+            <span class="spec-lbl">Coyoacán</span>
+            <div class="spec-wrap"><div class="spec-fill" style="width:62%"></div></div>
+            <span class="spec-pct">62%</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-lbl">Polanco</span>
+            <div class="spec-wrap"><div class="spec-fill" style="width:23%"></div></div>
+            <span class="spec-pct">23%</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-lbl">Condesa</span>
+            <div class="spec-wrap"><div class="spec-fill" style="width:10%"></div></div>
+            <span class="spec-pct">10%</span>
+          </div>
+          <div class="spec-row" style="margin-bottom:0">
+            <span class="spec-lbl">Otros</span>
+            <div class="spec-wrap"><div class="spec-fill" style="width:5%; background:var(--n-300)"></div></div>
+            <span class="spec-pct" style="color:var(--n-400)">5%</span>
+          </div>
+        </div>
+
+        <!-- Agencia -->
+        <div class="card-sec">
+          <div class="cs-head"><h3>Agencia</h3></div>
+          <div class="agency-row">
+            <div class="ag-icon">M</div>
+            <div>
+              <div class="ag-name">MarCa Inmobiliaria</div>
+              <div class="ag-meta">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Coyoacán · Miguel Ángel de Quevedo 878
+              </div>
+              <div class="ag-stats">
+                <span class="ag-stat"><b>5</b> asesores</span>
+                <span class="ag-stat"><b>124</b> propiedades</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verificaciones -->
+        <div class="card-sec">
+          <div class="cs-head"><h3>Verificaciones</h3></div>
+          <div class="verif-list">
+            <div class="verif-item">
+              <div class="verif-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
+              </div>
+              <div>
+                <span class="vt-title">Identidad verificada</span>
+                <span class="vt-sub">INE / Cédula profesional</span>
+              </div>
+            </div>
+            <div class="verif-item">
+              <div class="verif-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
+              </div>
+              <div>
+                <span class="vt-title">Agencia registrada</span>
+                <span class="vt-sub">MarCa Inmobiliaria</span>
+              </div>
+            </div>
+            <div class="verif-item">
+              <div class="verif-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
+              </div>
+              <div>
+                <span class="vt-title">Listados activos</span>
+                <span class="vt-sub">Propiedades verificadas en Monopolio</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historial — próximamente, sin ruido -->
+        <div class="card-sec">
+          <div class="cs-head"><h3>Historial de operaciones</h3></div>
+          <div class="coming-list">
+            <div class="coming-row">
+              <span class="coming-name">Ventas cerradas</span>
+              <span class="coming-soon">disponible próximamente</span>
+            </div>
+            <div class="coming-row">
+              <span class="coming-name">Colaboraciones</span>
+              <span class="coming-soon">disponible próximamente</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /variants-row -->
+</div>
+
+
+<script>
+  function showView(v) {
+    document.querySelectorAll('.view').forEach(el => el.classList.remove('on'));
+    document.querySelectorAll('.vtab').forEach(el => el.classList.remove('on'));
+    document.getElementById('view-' + v).classList.add('on');
+    event.target.classList.add('on');
+  }
+</script>
+
+</body>
+</html>
