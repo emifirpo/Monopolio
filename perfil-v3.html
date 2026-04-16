@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Monopolio — Laura Gómez · Asesor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ─── TOKENS (Figma exacto) ────────────────────────────────────── */
+:root {
+  --bg:                #121212;
+  --bg-surface:        #1a1a1a;
+  --bg-interaction:    #2d2d2d;
+  --border-divider:    #2d2d2d;
+  --border-exclusion:  #222222;
+  --border-selected:   #2759cd;
+  --border-interact:   #404040;
+  --content-primary:   #f7f7f7;
+  --content-secondary: #a6a6a6;
+  --content-placeholder:#898989;
+  --content-selected:  #cdddff;
+  --content-dark:      #2d2d2d;
+  --btn-primary:       #2759cd;
+  --btn-secondary:     #2d2d2d;
+  --brand-1:           #0368fe;
+  --brand-4:           #e6f0ff;
+  --badge-neutral:     #2d2d2d;
+  --green:             #22c55e;
+  --r-full:            999px;
+  --r-2xl:             24px;
+  --r-xl:              16px;
+  --r-lg:              12px;
+  --r-md:              8px;
+  --r-sm:              4px;
+  --header-h:          72px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Red Hat Display', sans-serif;
+  background: var(--bg);
+  color: var(--content-primary);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+button { font-family: inherit; cursor: pointer; border: none; }
+a { color: inherit; text-decoration: none; }
+svg { display: block; }
+
+/* ─── HEADER ───────────────────────────────────────────────────── */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: var(--header-h);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border-divider);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+}
+.logo {
+  display: flex; align-items: center; gap: 6px;
+  text-decoration: none; flex-shrink: 0; width: 169px;
+}
+.logo-text { font-size: 18px; font-weight: 700; color: var(--content-primary); letter-spacing: -0.3px; }
+
+.searchbox {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  width: 626px;
+  background: var(--badge-neutral);
+  border: 1px solid var(--border-interact);
+  border-radius: 55px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px;
+  box-shadow: 0 5px 30px rgba(24,26,61,.10);
+}
+.search-input {
+  flex: 1; background: var(--bg-interaction);
+  border-radius: var(--r-full); height: 40px;
+  display: flex; align-items: center; gap: 8px; padding: 0 12px; overflow: hidden;
+}
+.search-input svg { flex-shrink: 0; color: var(--content-secondary); }
+.search-input span {
+  font-size: 16px; font-weight: 500; color: var(--content-placeholder);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.search-filters { display: flex; align-items: center; gap: 12px; flex-shrink: 0; padding-right: 4px; }
+.chip {
+  background: var(--bg-interaction); border-radius: var(--r-full);
+  display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px;
+  font-size: 14px; font-weight: 700; color: var(--content-primary); cursor: pointer; white-space: nowrap;
+}
+.chip svg { flex-shrink: 0; }
+.btn-buscar {
+  background: var(--btn-primary); border-radius: var(--r-full);
+  height: 40px; min-width: 120px; padding: 0 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: #fcfcfc;
+  letter-spacing: 0.14px; cursor: pointer; border: none;
+  font-family: inherit; flex-shrink: 0; transition: opacity .15s;
+}
+.btn-buscar:hover { opacity: .88; }
+
+.header-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; width: 169px; justify-content: flex-end; }
+.header-divider { width: 1px; height: 28px; background: var(--border-divider); }
+.icon-btn {
+  width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+  border-radius: var(--r-full); background: transparent; border: none; cursor: pointer;
+}
+.icon-btn:hover { background: rgba(255,255,255,.06); }
+.avatar-sm {
+  width: 40px; height: 40px; border-radius: var(--r-full);
+  border: 2px solid var(--border-exclusion);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: white; cursor: pointer;
+}
+
+/* ─── PAGE SHELL ───────────────────────────────────────────────── */
+.page { padding-top: var(--header-h); display: flex; justify-content: center; }
+.content {
+  width: 1204px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 24px; padding: 32px 0 64px;
+}
+
+/* ─── PROFILE HERO ─────────────────────────────────────────────── */
+.profile-wrapper {
+  display: flex; flex-direction: column; align-items: center; gap: 12px; flex-shrink: 0;
+}
+.profile-avatar {
+  width: 104px; height: 104px; border-radius: var(--r-full);
+  border: 4px solid var(--border-exclusion);
+  overflow: hidden; flex-shrink: 0;
+}
+.profile-avatar-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #1e3a5f, #0f2040);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; font-weight: 700; color: white;
+}
+.profile-info { display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 420px; }
+.profile-name-row { display: flex; align-items: center; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.profile-name { font-size: 30px; font-weight: 600; color: white; line-height: normal; }
+.verified-badge {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.22);
+  border-radius: var(--r-full); padding: 3px 9px;
+  font-size: 11px; font-weight: 700; color: var(--green); white-space: nowrap;
+}
+.profile-agency { font-size: 13px; font-weight: 500; color: var(--content-secondary); text-align: center; }
+.profile-rating { display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 700; color: var(--content-primary); }
+.profile-rating .stars { color: #f59e0b; letter-spacing: 1px; }
+.profile-rating .reviews { font-weight: 400; color: var(--content-secondary); }
+
+.profile-zones { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.zone-chip {
+  padding: 4px 10px; border-radius: var(--r-full);
+  font-size: 12px; font-weight: 700;
+  background: var(--bg-interaction); color: var(--content-secondary);
+  border: 1px solid var(--border-divider); white-space: nowrap;
+}
+.zone-chip.active {
+  background: rgba(39,89,205,.18); border-color: rgba(39,89,205,.4);
+  color: var(--content-selected);
+}
+
+.profile-actions { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+.btn-share {
+  width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+  background: var(--btn-secondary); border-radius: var(--r-full);
+  cursor: pointer; border: none; color: var(--content-primary); flex-shrink: 0; transition: opacity .15s;
+}
+.btn-share:hover { opacity: .8; }
+.btn-group { display: flex; gap: 10px; align-items: center; }
+.btn-email {
+  background: var(--btn-secondary); border-radius: var(--r-full);
+  height: 48px; padding: 0 18px;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 14px; font-weight: 700; color: #fcfcfc;
+  cursor: pointer; border: none; font-family: inherit; transition: opacity .15s;
+}
+.btn-email:hover { opacity: .8; }
+.btn-contact {
+  background: var(--btn-primary); border-radius: var(--r-full);
+  height: 48px; padding: 0 20px;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 14px; font-weight: 700; color: #fcfcfc;
+  cursor: pointer; border: none; font-family: inherit; transition: opacity .15s;
+}
+.btn-contact:hover { opacity: .88; }
+
+/* ─── MICRO-BAR (6 stats) ──────────────────────────────────────── */
+.micro-bar {
+  width: 100%; display: flex; align-items: stretch;
+  border: 1px solid var(--border-divider); border-radius: var(--r-lg); overflow: hidden; flex-shrink: 0;
+}
+.micro-stat {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 14px 8px; gap: 3px;
+  border-right: 1px solid var(--border-divider);
+}
+.micro-stat:last-child { border-right: none; }
+.ms-val { font-size: 17px; font-weight: 700; color: var(--content-primary); white-space: nowrap; }
+.ms-lbl { font-size: 10px; font-weight: 500; color: var(--content-secondary); text-align: center; white-space: nowrap; }
+
+/* ─── METRICS (4 cards) ────────────────────────────────────────── */
+.metrics { display: flex; flex-direction: column; gap: 16px; width: 100%; flex-shrink: 0; }
+.metrics-row { display: flex; gap: 16px; align-items: stretch; width: 100%; }
+.metric-card {
+  flex: 1; min-width: 140px;
+  border: 1px solid var(--border-divider); border-radius: var(--r-lg);
+  padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden;
+}
+.metric-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--content-secondary); flex-shrink: 0; }
+.metric-title { font-size: 14px; font-weight: 700; color: var(--content-primary); line-height: normal; }
+.metric-sub { font-size: 14px; font-weight: 500; color: var(--content-secondary); line-height: normal; margin-top: 4px; }
+.metric-card-full {
+  width: 100%; border: 1px solid var(--border-divider); border-radius: var(--r-lg);
+  padding: 16px; display: flex; flex-direction: column; gap: 12px;
+}
+
+/* Distribution bar */
+.distri-bar { display: flex; height: 48px; border-radius: 10px; overflow: hidden; margin-top: 12px; flex-shrink: 0; }
+.distri-seg-blue { background: var(--brand-1); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: rgba(255,255,255,.95); }
+.distri-seg-light { flex: 1; background: var(--brand-4); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--content-dark); }
+.distri-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+.legend-item { display: flex; align-items: flex-start; gap: 8px; }
+.legend-dot { width: 16px; height: 16px; border-radius: 4px; margin-top: 4px; flex-shrink: 0; }
+.legend-dot.blue { background: var(--btn-primary); }
+.legend-dot.light { background: var(--brand-4); }
+.legend-pct { font-size: 24px; font-weight: 400; color: var(--content-primary); line-height: 32px; }
+.legend-label { font-size: 14px; font-weight: 500; color: var(--content-secondary); line-height: 1.5; margin-top: 4px; }
+
+/* ─── TWO-COLUMN LAYOUT ────────────────────────────────────────── */
+.main-layout { width: 100%; max-width: 1200px; display: grid; grid-template-columns: 1fr 304px; gap: 20px; align-items: start; }
+.main-col { display: flex; flex-direction: column; gap: 16px; }
+.sidebar-col { display: flex; flex-direction: column; gap: 12px; }
+
+/* ─── SHARED CARD ──────────────────────────────────────────────── */
+.card { border: 1px solid var(--border-divider); border-radius: var(--r-lg); overflow: hidden; }
+.card-head {
+  padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border-divider);
+}
+.card-head h3 { font-size: 15px; font-weight: 700; color: var(--content-primary); }
+.card-head a { font-size: 12px; font-weight: 600; color: rgba(147,197,253,.9); }
+.card-head a:hover { color: #93c5fd; }
+.card-body { padding: 16px; }
+
+/* ─── SECTION LABEL ────────────────────────────────────────────── */
+.spec-lbl {
+  font-size: 10px; font-weight: 700; color: var(--content-secondary);
+  text-transform: uppercase; letter-spacing: .8px; margin-bottom: 10px;
+}
+
+/* ─── MAP ──────────────────────────────────────────────────────── */
+.map-wrap {
+  position: relative; background: #0a0f1a;
+  border-radius: var(--r-md); overflow: hidden; border: 1px solid rgba(255,255,255,.05);
+}
+#mexico-map { width: 100%; height: 230px; display: block; }
+.map-controls {
+  position: absolute; bottom: 10px; right: 10px;
+  display: flex; flex-direction: column;
+  background: rgba(18,18,18,.92); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 6px; overflow: hidden;
+}
+.map-ctrl-btn {
+  width: 28px; height: 28px; background: transparent; border: none;
+  color: var(--content-secondary); font-size: 16px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; justify-content: center; transition: all .12s;
+}
+.map-ctrl-btn:hover { color: var(--content-primary); background: rgba(255,255,255,.08); }
+.map-ctrl-sep { height: 1px; background: rgba(255,255,255,.08); }
+.map-legend { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.map-legend-label { font-size: 10px; color: var(--content-secondary); }
+.map-legend-track { flex: 1; height: 4px; border-radius: 2px; background: linear-gradient(to right, #0c1220, #3b82f6); }
+@keyframes state-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cdmx-pulse { 0% { r: 6; opacity: .9; } 100% { r: 14; opacity: 0; } }
+.cdmx-pulse { animation: cdmx-pulse 2.2s ease-out infinite; }
+#map-tooltip {
+  display: none; position: fixed; z-index: 9999;
+  background: rgba(16,22,36,.96); border: 1px solid rgba(96,165,250,.2);
+  border-radius: 8px; padding: 10px 12px; min-width: 180px;
+  pointer-events: none; font-family: 'Red Hat Display', sans-serif;
+}
+.tt-state-name { font-size: 11px; font-weight: 700; color: #93c5fd; margin-bottom: 8px; letter-spacing: .3px; text-transform: uppercase; }
+.tt-zone-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+.tt-zone-label { width: 88px; font-size: 11px; font-weight: 500; color: rgba(255,255,255,.75); flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tt-zone-track { flex: 1; height: 3px; background: rgba(255,255,255,.1); border-radius: 2px; overflow: hidden; }
+.tt-zone-fill { height: 100%; background: #3b82f6; border-radius: 2px; }
+.tt-zone-pct { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.9); width: 26px; text-align: right; flex-shrink: 0; }
+
+/* ─── ZONE BARS ────────────────────────────────────────────────── */
+.zone-bars { display: flex; flex-direction: column; gap: 10px; }
+.zone-bar-item { display: flex; flex-direction: column; gap: 5px; }
+.zone-bar-header { display: flex; align-items: center; justify-content: space-between; }
+.zone-bar-name { font-size: 12px; font-weight: 600; color: var(--content-primary); }
+.zone-bar-meta { display: flex; align-items: center; gap: 8px; }
+.zone-bar-pct { font-size: 12px; font-weight: 700; color: var(--content-secondary); }
+.zone-bar-ops { font-size: 11px; color: var(--content-secondary); }
+.zone-bar-track { height: 5px; background: rgba(255,255,255,.07); border-radius: 3px; overflow: hidden; }
+.zone-bar-fill { height: 100%; background: var(--btn-primary); border-radius: 3px; }
+.zone-bar-item:first-child .zone-bar-fill { background: var(--brand-1); }
+
+/* ─── PRICE RANGE ──────────────────────────────────────────────── */
+.price-scale { display: flex; justify-content: space-between; font-size: 10px; color: var(--content-secondary); margin-bottom: 6px; }
+.price-track { height: 6px; background: rgba(255,255,255,.07); border-radius: 3px; position: relative; margin-bottom: 10px; }
+.price-fill { position: absolute; height: 100%; background: var(--btn-primary); border-radius: 3px; }
+.price-avg-marker { position: absolute; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; border-radius: 50%; background: white; border: 2px solid var(--brand-1); margin-left: -6px; }
+.price-avg-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+.price-avg-label { color: var(--content-secondary); }
+.price-avg-val { font-weight: 700; color: var(--content-primary); }
+
+/* ─── OP TYPE BAR ──────────────────────────────────────────────── */
+.op-bar-wrap { display: flex; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+.op-seg-v { background: var(--brand-1); }
+.op-seg-r { background: #93c5fd; flex: 1; }
+.op-legend { display: flex; gap: 16px; }
+.op-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--content-secondary); }
+.op-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.op-dot.v { background: var(--brand-1); }
+.op-dot.r { background: #93c5fd; }
+
+/* ─── PROFILE PILLS ────────────────────────────────────────────── */
+.pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.meta-pill {
+  padding: 4px 10px; border-radius: var(--r-full); font-size: 12px; font-weight: 600;
+  background: var(--bg-interaction); color: var(--content-secondary);
+  border: 1px solid var(--border-divider);
+}
+
+/* ─── PROPERTIES ───────────────────────────────────────────────── */
+.tabs-bar { display: flex; align-items: center; border-bottom: 1px solid var(--border-divider); }
+.tab {
+  display: flex; align-items: center; justify-content: center;
+  height: 44px; padding: 0 14px;
+  font-size: 14px; font-weight: 500; color: var(--content-secondary);
+  cursor: pointer; white-space: nowrap;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  border-radius: 4px 4px 0 0; transition: color .15s;
+}
+.tab.active { color: var(--content-selected); border-bottom-color: var(--border-selected); }
+.tab:hover:not(.active) { color: var(--content-primary); }
+
+.prop-filters { display: flex; gap: 6px; flex-wrap: wrap; padding: 12px 0 4px; }
+.pf {
+  padding: 5px 12px; border-radius: var(--r-full);
+  font-size: 12px; font-weight: 700;
+  background: var(--bg-interaction); color: var(--content-secondary);
+  border: 1px solid var(--border-divider);
+  cursor: pointer; font-family: inherit; transition: all .12s;
+}
+.pf.on { background: rgba(39,89,205,.2); border-color: var(--border-selected); color: var(--content-selected); }
+.pf:hover:not(.on) { color: var(--content-primary); }
+
+.cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: 100%; margin-top: 14px; }
+.prop-card {
+  background: var(--bg); border: 1px solid var(--border-divider);
+  border-radius: var(--r-2xl); overflow: hidden; cursor: pointer;
+  transition: border-color .18s, transform .18s, box-shadow .18s;
+}
+.prop-card:hover { border-color: rgba(39,89,205,.4); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,.4); }
+.prop-photo { aspect-ratio: 360/240; position: relative; overflow: hidden; }
+.prop-photo-placeholder { width: 100%; height: 100%; }
+.photo-v1 { background: linear-gradient(145deg, #1a3258 0%, #0e1b33 55%, #07101f 100%); }
+.photo-v2 { background: linear-gradient(145deg, #1e2a3a 0%, #0d1520 55%, #06101a 100%); }
+.photo-v3 { background: linear-gradient(145deg, #1a2e45 0%, #0e1b2e 55%, #07111e 100%); }
+.photo-v4 { background: linear-gradient(145deg, #2a1a35 0%, #160c1e 55%, #0e0814 100%); }
+.photo-v5 { background: linear-gradient(145deg, #1a2a1a 0%, #0e160e 55%, #080e08 100%); }
+.photo-v6 { background: linear-gradient(145deg, #2e2810 0%, #1a1808 55%, #0f0e05 100%); }
+.prop-photo-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.3) 0%, transparent 50%); }
+.op-badge {
+  position: absolute; top: 12px; left: 12px;
+  padding: 3px 8px; border-radius: var(--r-full); font-size: 10px; font-weight: 700; letter-spacing: .4px;
+}
+.op-badge.venta { background: rgba(39,89,205,.85); color: #cdddff; }
+.op-badge.renta { background: rgba(34,197,94,.2); border: 1px solid rgba(34,197,94,.35); color: #86efac; }
+.prop-fav {
+  position: absolute; top: 12px; right: 12px;
+  width: 34px; height: 34px; border-radius: var(--r-full);
+  background: rgba(18,18,18,.75); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; border: none; transition: background .15s;
+}
+.prop-fav:hover { background: rgba(18,18,18,.9); }
+.prop-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 5px; }
+.prop-price-row { display: flex; align-items: baseline; gap: 5px; }
+.prop-price { font-size: 17px; font-weight: 700; color: var(--content-primary); white-space: nowrap; letter-spacing: -.3px; }
+.prop-currency { font-size: 12px; font-weight: 500; color: var(--content-secondary); }
+.prop-location { font-size: 12px; font-weight: 500; color: var(--content-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prop-features { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.prop-feature { font-size: 11px; font-weight: 700; color: var(--content-primary); }
+.prop-dot { font-size: 12px; color: var(--content-secondary); }
+.show-more {
+  width: 100%; margin-top: 10px; padding: 11px;
+  background: transparent; border: 1px solid var(--border-divider); border-radius: var(--r-lg);
+  font-size: 13px; font-weight: 600; color: var(--content-secondary);
+  cursor: pointer; font-family: inherit; transition: all .12s;
+}
+.show-more:hover { border-color: var(--border-interact); color: var(--content-primary); }
+
+/* ─── SERVICIOS ────────────────────────────────────────────────── */
+.srv-list { display: flex; flex-direction: column; }
+.srv-item { display: flex; flex-direction: column; gap: 2px; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
+.srv-item:first-child { padding-top: 0; }
+.srv-item:last-child { border-bottom: none; padding-bottom: 0; }
+.srv-name { font-size: 13px; font-weight: 700; color: var(--content-primary); }
+.srv-desc { font-size: 12px; font-weight: 500; color: var(--content-secondary); }
+
+/* ─── HISTORIAL ────────────────────────────────────────────────── */
+.hist-list { display: flex; flex-direction: column; }
+.hist-item { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: start; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
+.hist-item:first-child { padding-top: 0; }
+.hist-item:last-child { border-bottom: none; padding-bottom: 0; }
+.hist-year { font-size: 11px; font-weight: 700; color: var(--content-secondary); padding-top: 2px; }
+.hist-right { display: flex; flex-direction: column; gap: 5px; }
+.hist-val { font-size: 13px; font-weight: 700; color: var(--content-primary); }
+.hist-bar-wrap { height: 4px; background: rgba(255,255,255,.07); border-radius: 2px; overflow: hidden; }
+.hist-bar-fill { height: 100%; background: var(--btn-primary); border-radius: 2px; }
+
+/* ─── SIDEBAR CARDS ────────────────────────────────────────────── */
+.sc { border: 1px solid var(--border-divider); border-radius: var(--r-lg); overflow: hidden; }
+.sc-head {
+  padding: 11px 14px; font-size: 10px; font-weight: 700;
+  color: var(--content-secondary); text-transform: uppercase; letter-spacing: .8px;
+  border-bottom: 1px solid var(--border-divider);
+}
+.sc-body { padding: 14px; }
+
+.cta-stack { display: flex; flex-direction: column; gap: 8px; }
+.cta-wa {
+  width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 7px;
+  background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.25);
+  border-radius: var(--r-full); font-size: 13px; font-weight: 700; color: #86efac;
+  cursor: pointer; font-family: inherit; transition: opacity .15s;
+}
+.cta-wa:hover { opacity: .85; }
+.cta-call {
+  width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 7px;
+  background: var(--bg-interaction); border: 1px solid var(--border-divider);
+  border-radius: var(--r-full); font-size: 13px; font-weight: 700; color: var(--content-primary);
+  cursor: pointer; font-family: inherit; transition: opacity .15s;
+}
+.cta-call:hover { opacity: .8; }
+.cta-mail {
+  width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 7px;
+  background: transparent; border: 1px solid var(--border-divider);
+  border-radius: var(--r-full); font-size: 13px; font-weight: 700; color: var(--content-secondary);
+  cursor: pointer; font-family: inherit; transition: all .15s;
+}
+.cta-mail:hover { color: var(--content-primary); border-color: var(--border-interact); }
+
+.resp-block { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.05); }
+.resp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.resp-label { font-size: 12px; font-weight: 600; color: var(--content-secondary); }
+.resp-value { font-size: 14px; font-weight: 700; color: var(--content-primary); }
+.resp-track { height: 4px; background: rgba(255,255,255,.07); border-radius: 2px; overflow: hidden; margin-bottom: 5px; }
+.resp-fill { height: 100%; background: var(--green); border-radius: 2px; }
+.resp-sub { font-size: 11px; color: var(--content-secondary); }
+
+.avail-status { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.avail-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px rgba(34,197,94,.5); }
+.avail-text { font-size: 13px; font-weight: 600; color: var(--content-primary); }
+.avail-hours { font-size: 12px; color: var(--content-secondary); margin-bottom: 10px; }
+.day-row { display: flex; gap: 4px; }
+.day-chip {
+  flex: 1; height: 30px; display: flex; align-items: center; justify-content: center;
+  border-radius: 6px; font-size: 11px; font-weight: 700;
+  background: rgba(255,255,255,.05); color: var(--content-secondary);
+  border: 1px solid transparent;
+}
+.day-chip.on { background: rgba(39,89,205,.15); border-color: rgba(39,89,205,.3); color: var(--content-selected); }
+
+.contact-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.contact-row:first-child { padding-top: 0; }
+.contact-row:last-child { border-bottom: none; padding-bottom: 0; }
+.contact-icon {
+  width: 32px; height: 32px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-interaction); border-radius: var(--r-md);
+}
+.contact-lbl { font-size: 11px; color: var(--content-secondary); }
+.contact-val { font-size: 13px; font-weight: 600; color: var(--content-primary); }
+
+.verif-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.verif-row:first-child { padding-top: 0; }
+.verif-row:last-child { border-bottom: none; padding-bottom: 0; }
+.verif-icon {
+  width: 20px; height: 20px; flex-shrink: 0; border-radius: 50%;
+  background: rgba(34,197,94,.12);
+  display: flex; align-items: center; justify-content: center; margin-top: 1px;
+}
+.verif-name { font-size: 13px; font-weight: 600; color: var(--content-primary); }
+.verif-desc { font-size: 11px; color: var(--content-secondary); margin-top: 1px; }
+.cert-badge {
+  display: inline-block; padding: 2px 7px; border-radius: var(--r-full);
+  font-size: 10px; font-weight: 700;
+  background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.2);
+  color: #fbbf24; margin-top: 4px;
+}
+.report-link { text-align: center; padding: 6px 0; font-size: 11px; color: var(--content-secondary); display: block; }
+.report-link:hover { color: var(--content-primary); }
+
+/* spec section spacing */
+.spec-sec { margin-bottom: 20px; }
+.spec-sec:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="header">
+  <a class="logo" href="index.html">
+    <span class="logo-text">Monopolio</span>
+  </a>
+
+  <div class="searchbox">
+    <div class="search-input">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#898989">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <span>Colonia, dirección o lugar</span>
+    </div>
+    <div class="search-filters">
+      <div class="chip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Rentar
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="chip">
+        Precio
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <button class="btn-buscar">Buscar</button>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="header-divider"></div>
+    <button class="icon-btn">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a6a6a6" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+    </button>
+    <div class="avatar-sm">AN</div>
+  </div>
+</header>
+
+<!-- ══ PAGE ══ -->
+<div class="page">
+  <div class="content">
+
+    <!-- ── PERFIL HERO ── -->
+    <div class="profile-wrapper">
+      <div class="profile-avatar">
+        <div class="profile-avatar-placeholder">LG</div>
+      </div>
+      <div class="profile-info">
+        <div class="profile-name-row">
+          <span class="profile-name">Laura Gómez</span>
+          <span class="verified-badge">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Verificado
+          </span>
+        </div>
+        <div class="profile-agency">Grupo Neri Inmobiliaria · Asesor Inmobiliario</div>
+        <div class="profile-rating">
+          <span class="stars">★★★★★</span>
+          <span>4.9</span>
+          <span class="reviews">(127 reseñas)</span>
+        </div>
+        <div class="profile-zones">
+          <span class="zone-chip active">CDMX</span>
+          <span class="zone-chip">Polanco</span>
+          <span class="zone-chip">Condesa</span>
+          <span class="zone-chip">Narvarte</span>
+        </div>
+        <div class="profile-actions">
+          <button class="btn-share">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </button>
+          <div class="btn-group">
+            <button class="btn-email">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              Email
+            </button>
+            <button class="btn-contact">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.7A2 2 0 012.18 1h3a2 2 0 012 1.72c.13 1 .37 1.97.72 2.9a2 2 0 01-.45 2.11L6.91 8.27a16 16 0 006.82 6.82l.54-.54a2 2 0 012.11-.45c.93.35 1.9.59 2.9.72A2 2 0 0122 16.92z"/>
+              </svg>
+              Contactar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MICRO-BAR (6 stats) ── -->
+    <div class="micro-bar">
+      <div class="micro-stat">
+        <div class="ms-val">47</div>
+        <div class="ms-lbl">Propiedades activas</div>
+      </div>
+      <div class="micro-stat">
+        <div class="ms-val">186</div>
+        <div class="ms-lbl">Ops. cerradas</div>
+      </div>
+      <div class="micro-stat">
+        <div class="ms-val">8 años</div>
+        <div class="ms-lbl">Experiencia</div>
+      </div>
+      <div class="micro-stat">
+        <div class="ms-val">&lt; 2 h</div>
+        <div class="ms-lbl">Resp. promedio</div>
+      </div>
+      <div class="micro-stat">
+        <div class="ms-val">4.9 / 5</div>
+        <div class="ms-lbl">Calificación</div>
+      </div>
+      <div class="micro-stat">
+        <div class="ms-val">Desde 2019</div>
+        <div class="ms-lbl">En Monopolio</div>
+      </div>
+    </div>
+
+    <!-- ── MÉTRICAS (4 cards) ── -->
+    <div class="metrics">
+      <div class="metrics-row">
+
+        <div class="metric-card">
+          <div class="metric-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+          <div>
+            <div class="metric-title">47 propiedades activas</div>
+            <div class="metric-sub">En el mercado ahora</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div>
+            <div class="metric-title">23 operaciones este año</div>
+            <div class="metric-sub">Cerradas en 2024</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <div>
+            <div class="metric-title">8 años de experiencia</div>
+            <div class="metric-sub">En bienes raíces</div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="metric-title">4.9 / 5 calificación</div>
+            <div class="metric-sub">Basada en 127 reseñas</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Distribución de cartera -->
+      <div class="metric-card-full">
+        <div class="metric-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="metric-title">Distribución de cartera</div>
+          <div class="metric-sub">Especializado en la venta de propiedades</div>
+        </div>
+        <div class="distri-bar">
+          <div class="distri-seg-blue" style="width:72%">72%</div>
+          <div class="distri-seg-light">28%</div>
+        </div>
+        <div class="distri-legend">
+          <div class="legend-item">
+            <div class="legend-dot blue"></div>
+            <div>
+              <div class="legend-pct">72%</div>
+              <div class="legend-label">Propiedades anunciadas para venta</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot light"></div>
+            <div>
+              <div class="legend-pct">28%</div>
+              <div class="legend-label">Propiedades anunciadas para alquiler</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ DOS COLUMNAS ══ -->
+    <div class="main-layout">
+
+      <!-- ── COLUMNA PRINCIPAL ── -->
+      <div class="main-col">
+
+        <!-- ESPECIALIZACIÓN -->
+        <div class="card">
+          <div class="card-head"><h3>Especialización</h3></div>
+          <div class="card-body">
+
+            <!-- Mapa -->
+            <div class="spec-sec">
+              <div class="spec-lbl">Zonas de operación</div>
+              <div class="map-wrap">
+                <svg id="mexico-map" role="img" aria-label="Mapa de zonas de operación en México">
+                  <text x="50%" y="50%" text-anchor="middle" fill="#1e2d47" font-size="11" dy=".3em">Cargando…</text>
+                </svg>
+                <div class="map-controls">
+                  <button class="map-ctrl-btn" id="map-zoom-out">−</button>
+                  <div class="map-ctrl-sep"></div>
+                  <button class="map-ctrl-btn" id="map-zoom-reset" style="font-size:11px">⊡</button>
+                  <div class="map-ctrl-sep"></div>
+                  <button class="map-ctrl-btn" id="map-zoom-in">+</button>
+                </div>
+              </div>
+              <div class="map-legend">
+                <span class="map-legend-label">Menor actividad</span>
+                <div class="map-legend-track"></div>
+                <span class="map-legend-label">Mayor</span>
+              </div>
+            </div>
+
+            <!-- Intensidad por zona -->
+            <div class="spec-sec">
+              <div class="spec-lbl">Intensidad por zona</div>
+              <div class="zone-bars">
+                <div class="zone-bar-item">
+                  <div class="zone-bar-header">
+                    <span class="zone-bar-name">CDMX</span>
+                    <div class="zone-bar-meta"><span class="zone-bar-pct">72%</span><span class="zone-bar-ops">134 ops</span></div>
+                  </div>
+                  <div class="zone-bar-track"><div class="zone-bar-fill" style="width:72%"></div></div>
+                </div>
+                <div class="zone-bar-item">
+                  <div class="zone-bar-header">
+                    <span class="zone-bar-name">Estado de México</span>
+                    <div class="zone-bar-meta"><span class="zone-bar-pct">18%</span><span class="zone-bar-ops">33 ops</span></div>
+                  </div>
+                  <div class="zone-bar-track"><div class="zone-bar-fill" style="width:18%"></div></div>
+                </div>
+                <div class="zone-bar-item">
+                  <div class="zone-bar-header">
+                    <span class="zone-bar-name">Querétaro</span>
+                    <div class="zone-bar-meta"><span class="zone-bar-pct">10%</span><span class="zone-bar-ops">19 ops</span></div>
+                  </div>
+                  <div class="zone-bar-track"><div class="zone-bar-fill" style="width:10%"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rango de precio -->
+            <div class="spec-sec">
+              <div class="spec-lbl">Rango de precio habitual</div>
+              <div class="price-scale"><span>$500K</span><span>$5M</span><span>$10M+</span></div>
+              <div class="price-track">
+                <div class="price-fill" style="left:8%;width:54%"></div>
+                <div class="price-avg-marker" style="left:36%"></div>
+              </div>
+              <div class="price-avg-row">
+                <span class="price-avg-label">Precio promedio del portafolio</span>
+                <span class="price-avg-val">$3,200,000 MXN</span>
+              </div>
+            </div>
+
+            <!-- Tipo de operación -->
+            <div class="spec-sec">
+              <div class="spec-lbl">Tipo de operación</div>
+              <div class="op-bar-wrap">
+                <div class="op-seg-v" style="width:72%"></div>
+                <div class="op-seg-r"></div>
+              </div>
+              <div class="op-legend">
+                <div class="op-item"><div class="op-dot v"></div>Venta — 72%</div>
+                <div class="op-item"><div class="op-dot r"></div>Renta — 28%</div>
+              </div>
+            </div>
+
+            <!-- Perfil pills -->
+            <div class="spec-sec">
+              <div class="spec-lbl">Perfil</div>
+              <div class="pill-row">
+                <span class="meta-pill">8 años de experiencia</span>
+                <span class="meta-pill">Español · Inglés básico</span>
+                <span class="meta-pill">Casas y departamentos</span>
+                <span class="meta-pill">Residencial</span>
+                <span class="meta-pill">Plusvalía</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PROPIEDADES -->
+        <div class="card">
+          <div class="card-head">
+            <h3>Propiedades <span id="p-count" style="color:var(--content-secondary);font-weight:400">(47)</span></h3>
+            <a href="#">Ver todas</a>
+          </div>
+          <div class="card-body">
+
+            <div class="tabs-bar">
+              <div class="tab active" onclick="setTab(this)">Activas (47)</div>
+              <div class="tab" onclick="setTab(this)">Vendidas (23)</div>
+              <div class="tab" onclick="setTab(this)">En renta (12)</div>
+            </div>
+
+            <div class="prop-filters">
+              <button class="pf on">Todos</button>
+              <button class="pf">Venta</button>
+              <button class="pf">Renta</button>
+              <button class="pf">Casa</button>
+              <button class="pf">Departamento</button>
+            </div>
+
+            <div class="cards-grid">
+
+              <div class="prop-card">
+                <div class="prop-photo">
+                  <div class="prop-photo-placeholder photo-v1"></div>
+                  <div class="prop-photo-overlay"></div>
+                  <span class="op-badge venta">Venta</span>
+                  <button class="prop-fav"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f7f7" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+                </div>
+                <div class="prop-body">
+                  <div class="prop-price-row"><span class="prop-price">$3,200,000</span><span class="prop-currency">MXN</span></div>
+                  <div class="prop-location">Departamento · Condesa, CDMX</div>
+                  <div class="prop-features"><span class="prop-feature">3 rec</span><span class="prop-dot">·</span><span class="prop-feature">2 baños</span><span class="prop-dot">·</span><span class="prop-feature">92 m²</span></div>
+                </div>
+              </div>
+
+              <div class="prop-card">
+                <div class="prop-photo">
+                  <div class="prop-photo-placeholder photo-v2"></div>
+                  <div class="prop-photo-overlay"></div>
+                  <span class="op-badge renta">Renta</span>
+                  <button class="prop-fav"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f7f7" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+                </div>
+                <div class="prop-body">
+                  <div class="prop-price-row"><span class="prop-price">$22,000</span><span class="prop-currency">/mes</span></div>
+                  <div class="prop-location">Departamento · Polanco, CDMX</div>
+                  <div class="prop-features"><span class="prop-feature">2 rec</span><span class="prop-dot">·</span><span class="prop-feature">1 baño</span><span class="prop-dot">·</span><span class="prop-feature">68 m²</span></div>
+                </div>
+              </div>
+
+              <div class="prop-card">
+                <div class="prop-photo">
+                  <div class="prop-photo-placeholder photo-v3"></div>
+                  <div class="prop-photo-overlay"></div>
+                  <span class="op-badge venta">Venta</span>
+                  <button class="prop-fav"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f7f7" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+                </div>
+                <div class="prop-body">
+                  <div class="prop-price-row"><span class="prop-price">$5,800,000</span><span class="prop-currency">MXN</span></div>
+                  <div class="prop-location">Casa · Coyoacán, CDMX</div>
+                  <div class="prop-features"><span class="prop-feature">4 rec</span><span class="prop-dot">·</span><span class="prop-feature">3 baños</span><span class="prop-dot">·</span><span class="prop-feature">210 m²</span></div>
+                </div>
+              </div>
+
+              <div class="prop-card">
+                <div class="prop-photo">
+                  <div class="prop-photo-placeholder photo-v4"></div>
+                  <div class="prop-photo-overlay"></div>
+                  <span class="op-badge renta">Renta</span>
+                  <button class="prop-fav"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f7f7" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+                </div>
+                <div class="prop-body">
+                  <div class="prop-price-row"><span class="prop-price">$18,200</span><span class="prop-currency">/mes</span></div>
+                  <div class="prop-location">Departamento · Mérida, YUC</div>
+                  <div class="prop-features"><span class="prop-feature">2 rec</span><span class="prop-dot">·</span><span class="prop-feature">2 baños</span><span class="prop-dot">·</span><span class="prop-feature">75 m²</span></div>
+                </div>
+              </div>
+
+              <div class="prop-card">
+                <div class="prop-photo">
+                  <div class="prop-photo-placeholder photo-v5"></div>
+                  <div class="prop-photo-overlay"></div>
+                  <span class="op-badge venta">Venta</span>
+                  <button class="prop-fav"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f7f7" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+                </div>
+                <div class="prop-body">
+                  <div class="prop-price-row"><span class="prop-price">$2,850,000</span><span class="prop-currency">MXN</span></div>
+                  <div class="prop-location">Oficina · Roma Norte, CDMX</div>
+                  <div class="prop-features"><span class="prop-feature">85 m²</span></div>
+                </div>
+              </div>
+
+              <div class="prop-card">
+                <div class="prop-photo">
+                  <div class="prop-photo-placeholder photo-v6"></div>
+                  <div class="prop-photo-overlay"></div>
+                  <span class="op-badge venta">Venta</span>
+                  <button class="prop-fav"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f7f7" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+                </div>
+                <div class="prop-body">
+                  <div class="prop-price-row"><span class="prop-price">$4,100,000</span><span class="prop-currency">MXN</span></div>
+                  <div class="prop-location">Casa · Tlalpan, CDMX</div>
+                  <div class="prop-features"><span class="prop-feature">3 rec</span><span class="prop-dot">·</span><span class="prop-feature">2 baños</span><span class="prop-dot">·</span><span class="prop-feature">180 m²</span></div>
+                </div>
+              </div>
+
+            </div>
+
+            <button class="show-more">Ver más propiedades (41 restantes)</button>
+
+          </div>
+        </div>
+
+        <!-- SERVICIOS -->
+        <div class="card">
+          <div class="card-head"><h3>Servicios</h3></div>
+          <div class="card-body">
+            <div class="srv-list">
+              <div class="srv-item"><span class="srv-name">Búsqueda personalizada</span><span class="srv-desc">Propiedades según tu perfil y necesidades</span></div>
+              <div class="srv-item"><span class="srv-name">Asesoría en escrituración</span><span class="srv-desc">Acompañamiento en trámites notariales</span></div>
+              <div class="srv-item"><span class="srv-name">Crédito hipotecario</span><span class="srv-desc">Orientación con bancos e INFONAVIT</span></div>
+              <div class="srv-item"><span class="srv-name">Valuación de inmuebles</span><span class="srv-desc">Precio justo según mercado actual</span></div>
+              <div class="srv-item"><span class="srv-name">Negociación</span><span class="srv-desc">Representación de tus intereses</span></div>
+              <div class="srv-item"><span class="srv-name">Staging y fotografía profesional</span><span class="srv-desc">Presentación óptima de tu propiedad</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HISTORIAL -->
+        <div class="card">
+          <div class="card-head"><h3>Historial de operaciones</h3></div>
+          <div class="card-body">
+            <div class="hist-list">
+              <div class="hist-item">
+                <span class="hist-year">2024</span>
+                <div class="hist-right"><span class="hist-val">23 operaciones cerradas</span><div class="hist-bar-wrap"><div class="hist-bar-fill" style="width:100%"></div></div></div>
+              </div>
+              <div class="hist-item">
+                <span class="hist-year">2023</span>
+                <div class="hist-right"><span class="hist-val">19 operaciones cerradas</span><div class="hist-bar-wrap"><div class="hist-bar-fill" style="width:82%"></div></div></div>
+              </div>
+              <div class="hist-item">
+                <span class="hist-year">2022</span>
+                <div class="hist-right"><span class="hist-val">15 operaciones cerradas</span><div class="hist-bar-wrap"><div class="hist-bar-fill" style="width:65%"></div></div></div>
+              </div>
+              <div class="hist-item">
+                <span class="hist-year">2021</span>
+                <div class="hist-right"><span class="hist-val">12 operaciones cerradas</span><div class="hist-bar-wrap"><div class="hist-bar-fill" style="width:52%"></div></div></div>
+              </div>
+              <div class="hist-item">
+                <span class="hist-year">2020</span>
+                <div class="hist-right"><span class="hist-val">8 operaciones cerradas</span><div class="hist-bar-wrap"><div class="hist-bar-fill" style="width:35%"></div></div></div>
+              </div>
+              <div class="hist-item">
+                <span class="hist-year">2019</span>
+                <div class="hist-right"><span class="hist-val">5 ops · Inicio en Monopolio</span><div class="hist-bar-wrap"><div class="hist-bar-fill" style="width:22%"></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /main-col -->
+
+      <!-- ── SIDEBAR ── -->
+      <div class="sidebar-col">
+
+        <!-- CTAs + tasa respuesta -->
+        <div class="sc">
+          <div class="sc-body">
+            <div class="cta-stack">
+              <button class="cta-wa">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+                WhatsApp
+              </button>
+              <button class="cta-call">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.7A2 2 0 012.18 1h3a2 2 0 012 1.72c.13 1 .37 1.97.72 2.9a2 2 0 01-.45 2.11L6.91 8.27a16 16 0 006.82 6.82l.54-.54a2 2 0 012.11-.45c.93.35 1.9.59 2.9.72A2 2 0 0122 16.92z"/></svg>
+                Llamar
+              </button>
+              <button class="cta-mail">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Correo electrónico
+              </button>
+            </div>
+            <div class="resp-block">
+              <div class="resp-header">
+                <span class="resp-label">Tasa de respuesta</span>
+                <span class="resp-value">92%</span>
+              </div>
+              <div class="resp-track"><div class="resp-fill" style="width:92%"></div></div>
+              <div class="resp-sub">Responde en menos de 2 horas</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Disponibilidad -->
+        <div class="sc">
+          <div class="sc-head">Disponibilidad</div>
+          <div class="sc-body">
+            <div class="avail-status">
+              <div class="avail-dot"></div>
+              <span class="avail-text">Disponible ahora</span>
+            </div>
+            <div class="avail-hours">Lun–Sáb · 9:00 am – 7:00 pm</div>
+            <div class="day-row">
+              <div class="day-chip on">L</div>
+              <div class="day-chip on">M</div>
+              <div class="day-chip on">X</div>
+              <div class="day-chip on">J</div>
+              <div class="day-chip on">V</div>
+              <div class="day-chip on">S</div>
+              <div class="day-chip">D</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contacto -->
+        <div class="sc">
+          <div class="sc-head">Contacto</div>
+          <div class="sc-body" style="padding-top:0;padding-bottom:0">
+            <div class="contact-row">
+              <div class="contact-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor" style="width:15px;height:15px;color:#22c55e"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+              </div>
+              <div>
+                <div class="contact-lbl">WhatsApp</div>
+                <div class="contact-val">+52 55 7314 1015</div>
+              </div>
+            </div>
+            <div class="contact-row">
+              <div class="contact-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;color:#a6a6a6"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.7A2 2 0 012.18 1h3a2 2 0 012 1.72c.13 1 .37 1.97.72 2.9a2 2 0 01-.45 2.11L6.91 8.27a16 16 0 006.82 6.82l.54-.54a2 2 0 012.11-.45c.93.35 1.9.59 2.9.72A2 2 0 0122 16.92z"/></svg>
+              </div>
+              <div>
+                <div class="contact-lbl">Teléfono agencia</div>
+                <div class="contact-val">+52 55 7155 4758</div>
+              </div>
+            </div>
+            <div class="contact-row">
+              <div class="contact-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;color:#a6a6a6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div>
+                <div class="contact-lbl">Correo</div>
+                <div class="contact-val" style="font-size:12px">maria@marcainmobiliaria.mx</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verificaciones -->
+        <div class="sc">
+          <div class="sc-head">Verificaciones</div>
+          <div class="sc-body" style="padding-top:0;padding-bottom:0">
+            <div class="verif-row">
+              <div class="verif-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div><div class="verif-name">Identidad verificada</div><div class="verif-desc">INE / Cédula profesional</div></div>
+            </div>
+            <div class="verif-row">
+              <div class="verif-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div><div class="verif-name">Agencia registrada</div><div class="verif-desc">MarCa Inmobiliaria · 6 años</div></div>
+            </div>
+            <div class="verif-row">
+              <div class="verif-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div><div class="verif-name">Certificaciones</div><span class="cert-badge">AMPI</span></div>
+            </div>
+            <div class="verif-row">
+              <div class="verif-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div><div class="verif-name">Historial en Monopolio</div><div class="verif-desc">Activo desde 2019</div></div>
+            </div>
+          </div>
+        </div>
+
+        <a class="report-link" href="#">Reportar perfil</a>
+
+      </div><!-- /sidebar-col -->
+
+    </div><!-- /main-layout -->
+
+  </div><!-- /content -->
+</div><!-- /page -->
+
+<div id="map-tooltip"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+/* ── D3 MEXICO MAP ─────────────────────────────────────────────── */
+(function () {
+  var ZONES = {
+    cdmx:      { names:['distrito federal'], intensity:1.0, label:'Ciudad de México',  rows:[{zone:'Coyoacán',pct:42},{zone:'Polanco',pct:28},{zone:'Condesa',pct:15},{zone:'Roma Norte',pct:8}] },
+    mexico:    { names:['mexico'],           intensity:0.55, label:'Estado de México', rows:[{zone:'Naucalpan',pct:12},{zone:'Tlalnepantla',pct:8}] },
+    queretaro: { names:['queretaro'],        intensity:0.28, label:'Querétaro',         rows:[{zone:'Querétaro Centro',pct:10}] }
+  };
+
+  function matchZone(name) {
+    var n = (name||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    for (var k in ZONES) {
+      var aa = ZONES[k].names;
+      for (var i=0;i<aa.length;i++) {
+        var a = aa[i].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+        if (n===a || n.indexOf(a)===0) return ZONES[k];
+      }
+    }
+    return null;
+  }
+
+  var GEO = {"type":"FeatureCollection","features":[{"id":"1255","type":"Feature","properties":{"n":"Sonora"},"geometry":{"type":"MultiPolygon","coordinates":[[[[-114.819,32.499],[-111.067,31.334],[-108.968,31.327],[-109.04,30.814],[-108.583,30.507],[-108.54,28.32],[-109.154,28.199],[-108.507,26.802],[-109.25,26.334],[-109.952,27.099],[-110.522,27.29],[-110.513,27.873],[-111.105,27.935],[-112.171,28.973],[-112.239,29.315],[-113.08,30.67],[-113.049,31.157],[-114.934,31.909],[-114.819,32.499]]],[[[-109.991,27.064],[-109.985,27.07],[-109.938,27.021],[-109.991,27.064]]],[[[-110.534,27.284],[-110.605,27.383],[-110.593,27.417],[-110.534,27.284]]],[[[-112.275,28.768],[-112.583,28.875],[-112.264,29.247],[-112.196,29.021],[-112.275,28.768]]],[[[-114.763,31.716],[-114.71,31.764],[-114.653,31.69],[-114.763,31.716]]]]}},{"id":"1256","type":"Feature","properties":{"n":"Baja California"},"geometry":{"type":"MultiPolygon","coordinates":[[[[-114.724,32.713],[-115.035,31.966],[-114.781,31.656],[-114.66,30.183],[-113.525,28.892],[-112.846,28.441],[-112.764,27.999],[-114.063,28.0],[-114.175,28.658],[-115.698,29.756],[-117.123,32.491],[-114.724,32.713]]],[[[-115.195,28.341],[-115.156,28.141],[-115.228,28.028],[-115.358,28.083],[-115.195,28.341]]]]}},{"id":"1259","type":"Feature","properties":{"n":"Chihuahua"},"geometry":{"type":"Polygon","coordinates":[[[-108.215,31.778],[-106.392,31.746],[-104.934,30.611],[-104.444,29.589],[-103.31,29.031],[-103.963,27.919],[-103.627,26.644],[-104.155,26.768],[-104.557,26.341],[-106.028,26.839],[-106.759,25.62],[-107.776,26.201],[-108.021,26.92],[-108.574,27.043],[-109.154,28.199],[-108.54,28.32],[-108.583,30.507],[-109.043,30.828],[-108.968,31.327],[-108.215,31.327],[-108.215,31.778]]]}},{"id":"1261","type":"Feature","properties":{"n":"Coahuila"},"geometry":{"type":"Polygon","coordinates":[[[-102.321,29.894],[-101.405,29.778],[-99.807,27.771],[-100.358,27.674],[-100.813,27.199],[-100.609,26.716],[-101.216,26.373],[-100.696,25.506],[-100.199,25.276],[-100.794,25.122],[-100.828,24.565],[-102.2,25.166],[-102.634,25.116],[-102.843,24.728],[-103.506,25.281],[-103.27,26.313],[-103.627,26.644],[-103.963,27.919],[-103.313,29.025],[-102.321,29.894]]]}},{"id":"1262","type":"Feature","properties":{"n":"Tamaulipas"},"geometry":{"type":"Polygon","coordinates":[[[-99.711,27.67],[-99.085,26.408],[-97.139,25.966],[-97.822,23.788],[-97.893,22.61],[-100.04,22.868],[-100.126,23.356],[-99.45,23.9],[-99.737,24.57],[-98.446,25.425],[-98.569,25.997],[-99.133,26.057],[-99.653,26.684],[-99.915,27.534],[-99.711,27.67]]]}},{"id":"1263","type":"Feature","properties":{"n":"Nuevo Le\u00f3n"},"geometry":{"type":"Polygon","coordinates":[[[-99.807,27.771],[-99.653,26.684],[-99.133,26.057],[-98.569,25.997],[-98.446,25.425],[-99.737,24.57],[-99.452,23.892],[-100.34,23.19],[-100.835,25.041],[-100.199,25.276],[-100.696,25.506],[-101.216,26.373],[-100.609,26.716],[-100.813,27.199],[-100.358,27.674],[-99.807,27.771]]]}},{"id":"1268","type":"Feature","properties":{"n":"Quintana Roo"},"geometry":{"type":"Polygon","coordinates":[[[-88.036,18.875],[-88.871,17.891],[-89.146,17.951],[-89.014,19.218],[-89.369,19.82],[-87.675,20.648],[-87.54,21.499],[-87.043,21.602],[-86.742,21.164],[-87.741,19.672],[-87.413,19.578],[-87.845,18.197],[-88.036,18.875]]]}},{"id":"1269","type":"Feature","properties":{"n":"Campeche"},"geometry":{"type":"Polygon","coordinates":[[[-89.146,17.951],[-91.859,17.954],[-92.486,18.648],[-91.948,18.691],[-91.802,18.386],[-91.182,18.657],[-91.415,18.814],[-90.742,19.343],[-90.381,20.824],[-90.374,20.519],[-90.018,20.468],[-89.037,19.289],[-89.146,17.951]]]}},{"id":"1270","type":"Feature","properties":{"n":"Tabasco"},"geometry":{"type":"Polygon","coordinates":[[[-90.991,17.802],[-90.992,17.252],[-91.433,17.255],[-91.967,17.909],[-92.755,17.364],[-93.271,17.994],[-93.59,17.376],[-94.137,18.207],[-92.486,18.648],[-91.891,17.967],[-91.477,18.102],[-90.991,17.802]]]}},{"id":"1271","type":"Feature","properties":{"n":"Chiapas"},"geometry":{"type":"Polygon","coordinates":[[[-91.819,17.885],[-90.395,16.419],[-90.434,16.107],[-91.74,16.061],[-92.211,15.272],[-92.226,14.549],[-94.084,16.149],[-94.041,16.801],[-93.271,17.994],[-92.755,17.364],[-91.819,17.885]]]}},{"id":"1987","type":"Feature","properties":{"n":"Colima"},"geometry":{"type":"Polygon","coordinates":[[[-103.742,18.69],[-104.329,19.099],[-104.592,19.173],[-103.649,19.501],[-103.478,18.966],[-103.742,18.69]]]}},{"id":"2017","type":"Feature","properties":{"n":"Nayarit"},"geometry":{"type":"Polygon","coordinates":[[[-104.778,21.021],[-105.545,20.768],[-105.187,21.453],[-105.733,22.504],[-105.443,22.515],[-105.414,23.035],[-104.956,22.928],[-104.997,22.543],[-104.335,22.475],[-104.21,21.519],[-103.945,21.375],[-104.286,20.708],[-104.778,21.021]]]}},{"id":"2026","type":"Feature","properties":{"n":"Baja California Sur"},"geometry":{"type":"Polygon","coordinates":[[[-114.276,27.901],[-112.76,27.998],[-111.784,26.572],[-111.307,25.779],[-110.684,24.883],[-110.61,24.254],[-110.361,24.111],[-110.233,24.343],[-109.468,23.555],[-109.532,23.108],[-110.0,22.894],[-110.307,23.541],[-112.078,24.762],[-112.031,25.474],[-112.179,25.955],[-113.119,26.794],[-115.084,27.851],[-114.276,27.901]]]}},{"id":"2073","type":"Feature","properties":{"n":"Sinaloa"},"geometry":{"type":"Polygon","coordinates":[[[-105.724,22.51],[-108.328,25.111],[-109.116,25.536],[-109.293,26.237],[-108.374,27.077],[-108.021,26.92],[-107.776,26.201],[-106.937,25.642],[-107.115,25.145],[-106.596,24.368],[-105.862,24.064],[-105.843,23.581],[-105.392,23.15],[-105.443,22.515],[-105.724,22.51]]]}},{"id":"2095","type":"Feature","properties":{"n":"Yucat\u00e1n"},"geometry":{"type":"Polygon","coordinates":[[[-90.381,20.824],[-89.786,21.285],[-87.54,21.499],[-87.675,20.648],[-89.415,19.651],[-90.018,20.468],[-90.374,20.519],[-90.381,20.824]]]}},{"id":"2096","type":"Feature","properties":{"n":"Veracruz"},"geometry":{"type":"Polygon","coordinates":[[[-97.782,22.273],[-97.316,21.561],[-97.151,20.647],[-95.862,18.723],[-94.137,18.207],[-93.637,17.3],[-94.938,17.217],[-95.208,17.732],[-95.77,17.516],[-95.838,18.12],[-96.664,18.669],[-97.304,18.676],[-97.264,19.16],[-96.982,19.281],[-97.408,19.446],[-97.136,20.122],[-97.774,20.273],[-97.559,20.504],[-97.779,20.814],[-98.0,20.484],[-98.079,20.697],[-98.569,20.472],[-98.13,21.072],[-98.642,21.609],[-98.349,22.192],[-98.616,22.419],[-97.782,22.273]]]}},{"id":"2097","type":"Feature","properties":{"n":"Jalisco"},"geometry":{"type":"Polygon","coordinates":[[[-104.593,19.15],[-105.699,20.407],[-104.788,21.02],[-104.286,20.708],[-103.945,21.375],[-104.399,22.085],[-103.952,22.37],[-103.983,22.772],[-103.779,22.735],[-103.852,22.179],[-103.728,22.606],[-103.658,22.117],[-103.373,22.517],[-103.038,22.287],[-103.747,21.228],[-103.06,21.045],[-102.647,21.487],[-102.76,21.749],[-101.529,21.877],[-102.1,20.387],[-103.078,20.105],[-102.707,19.862],[-102.658,19.231],[-103.478,18.966],[-103.649,19.501],[-104.056,19.537],[-104.593,19.15]]]}},{"id":"2098","type":"Feature","properties":{"n":"Michoac\u00e1n"},"geometry":{"type":"Polygon","coordinates":[[[-102.169,17.921],[-103.707,18.591],[-103.612,18.888],[-102.549,19.387],[-103.078,20.105],[-101.996,20.403],[-100.532,19.905],[-100.236,20.191],[-100.146,19.436],[-100.789,18.801],[-100.632,18.337],[-101.802,18.588],[-102.169,17.921]]]}},{"id":"2099","type":"Feature","properties":{"n":"Guerrero"},"geometry":{"type":"Polygon","coordinates":[[[-98.555,16.318],[-101.059,17.264],[-102.169,17.921],[-102.164,18.154],[-101.802,18.588],[-100.632,18.337],[-100.735,18.857],[-100.448,18.839],[-100.303,18.39],[-99.66,18.764],[-99.161,18.553],[-98.331,17.873],[-98.325,17.317],[-98.003,17.026],[-98.555,16.318]]]}},{"id":"2100","type":"Feature","properties":{"n":"Oaxaca"},"geometry":{"type":"Polygon","coordinates":[[[-94.115,16.057],[-94.722,16.2],[-94.879,16.425],[-96.556,15.659],[-98.553,16.315],[-98.002,17.015],[-98.325,17.317],[-98.348,17.892],[-97.796,17.943],[-97.606,18.36],[-97.481,17.985],[-96.995,18.123],[-96.664,18.669],[-95.838,18.12],[-95.785,17.523],[-95.208,17.732],[-94.938,17.217],[-93.873,17.15],[-94.06,16.185],[-94.437,16.246],[-94.115,16.057]]]}},{"id":"4199","type":"Feature","properties":{"n":"M\u00e9xico"},"geometry":{"type":"Polygon","coordinates":[[[-98.689,19.844],[-98.71,18.97],[-99.124,19.571],[-99.495,18.674],[-100.275,18.392],[-100.624,18.871],[-99.844,20.309],[-99.387,19.756],[-99.034,20.041],[-98.689,19.844]]]}},{"id":"4200","type":"Feature","properties":{"n":"Puebla"},"geometry":{"type":"Polygon","coordinates":[[[-98.677,18.428],[-98.641,19.462],[-98.193,19.106],[-97.62,19.319],[-98.251,19.849],[-98.251,20.303],[-97.779,20.814],[-97.559,20.504],[-97.774,20.273],[-97.136,20.122],[-97.408,19.446],[-96.982,19.281],[-97.328,18.722],[-96.732,18.39],[-97.453,17.978],[-97.606,18.36],[-97.858,17.916],[-98.705,17.991],[-99.05,18.35],[-98.677,18.428]]]}},{"id":"4201","type":"Feature","properties":{"n":"Morelos"},"geometry":{"type":"Polygon","coordinates":[[[-98.646,19.024],[-98.677,18.428],[-99.507,18.624],[-99.285,19.142],[-98.646,19.024]]]}},{"id":"4202","type":"Feature","properties":{"n":"Quer\u00e9taro"},"geometry":{"type":"Polygon","coordinates":[[[-99.043,21.268],[-99.38,21.096],[-100.166,19.96],[-100.558,20.658],[-100.46,20.967],[-100.162,20.879],[-99.748,21.505],[-99.198,21.646],[-99.043,21.268]]]}},{"id":"4203","type":"Feature","properties":{"n":"Hidalgo"},"geometry":{"type":"Polygon","coordinates":[[[-99.38,21.096],[-98.515,21.399],[-98.13,21.072],[-98.571,20.495],[-98.022,20.661],[-98.276,20.242],[-98.143,19.673],[-98.659,19.586],[-99.018,20.042],[-99.387,19.756],[-99.844,20.309],[-99.38,21.096]]]}},{"id":"4204","type":"Feature","properties":{"n":"Guanajuato"},"geometry":{"type":"Polygon","coordinates":[[[-99.791,21.419],[-100.106,20.917],[-100.51,20.896],[-100.286,20.213],[-100.518,19.909],[-102.1,20.387],[-101.521,21.841],[-99.791,21.419]]]}},{"id":"4205","type":"Feature","properties":{"n":"San Luis Potos\u00ed"},"geometry":{"type":"Polygon","coordinates":[[[-100.828,24.565],[-100.439,23.229],[-100.057,23.241],[-100.0,22.783],[-98.357,22.245],[-98.592,21.212],[-99.112,21.29],[-99.198,21.646],[-99.57,21.392],[-101.521,21.841],[-101.352,22.59],[-101.813,22.465],[-102.299,23.25],[-100.828,24.565]]]}},{"id":"4206","type":"Feature","properties":{"n":"Zacatecas"},"geometry":{"type":"Polygon","coordinates":[[[-100.828,24.565],[-102.299,23.25],[-101.813,22.465],[-101.352,22.59],[-101.521,21.841],[-102.292,22.465],[-102.676,22.261],[-102.856,21.85],[-102.647,21.487],[-103.06,21.045],[-103.747,21.228],[-103.038,22.287],[-103.373,22.517],[-103.658,22.117],[-103.728,22.606],[-103.852,22.179],[-103.779,22.735],[-103.983,22.772],[-103.952,22.37],[-104.33,22.264],[-103.836,24.085],[-103.282,24.483],[-102.493,24.46],[-102.613,25.122],[-101.861,25.076],[-100.828,24.565]]]}},{"id":"4207","type":"Feature","properties":{"n":"Aguascalientes"},"geometry":{"type":"Polygon","coordinates":[[[-101.845,22.017],[-102.259,21.671],[-102.856,21.85],[-102.292,22.465],[-101.845,22.017]]]}},{"id":"4208","type":"Feature","properties":{"n":"Durango"},"geometry":{"type":"Polygon","coordinates":[[[-106.525,24.306],[-107.083,25.465],[-106.544,25.78],[-106.145,26.762],[-104.557,26.341],[-104.01,26.777],[-103.285,26.364],[-103.506,25.281],[-102.843,24.728],[-102.668,25.079],[-102.49,24.474],[-103.282,24.483],[-103.836,24.085],[-104.311,22.319],[-104.754,22.674],[-104.997,22.543],[-104.945,22.916],[-105.678,23.282],[-105.862,24.064],[-106.196,24.39],[-106.525,24.306]]]}},{"id":"4210","type":"Feature","properties":{"n":"Tlaxcala"},"geometry":{"type":"Polygon","coordinates":[[[-98.709,19.583],[-98.063,19.731],[-97.62,19.319],[-98.216,19.112],[-98.709,19.583]]]}},{"id":"4211","type":"Feature","properties":{"n":"Distrito Federal"},"geometry":{"type":"Polygon","coordinates":[[[-99.124,19.571],[-98.96,19.275],[-99.043,19.058],[-99.335,19.247],[-99.124,19.571]]]}}]};
+
+  var svgEl = document.getElementById('mexico-map');
+  var tooltip = document.getElementById('map-tooltip');
+
+  function renderMap() {
+    svgEl.innerHTML = '';
+    var W = svgEl.getBoundingClientRect().width || 500;
+    var H = 230;
+    var svg = d3.select('#mexico-map').attr('viewBox','0 0 '+W+' '+H).attr('preserveAspectRatio','xMidYMid meet');
+    var defs = svg.append('defs');
+    defs.append('clipPath').attr('id','map-clip').append('rect').attr('width',W).attr('height',H);
+    var filt = defs.append('filter').attr('id','state-glow').attr('x','-30%').attr('y','-30%').attr('width','160%').attr('height','160%');
+    filt.append('feGaussianBlur').attr('in','SourceGraphic').attr('stdDeviation','3').attr('result','blur');
+    var mg = filt.append('feMerge');
+    mg.append('feMergeNode').attr('in','blur');
+    mg.append('feMergeNode').attr('in','SourceGraphic');
+    var g = svg.append('g').attr('clip-path','url(#map-clip)');
+    var projection = d3.geoMercator().fitExtent([[6,4],[W-6,H-4]],GEO);
+    var path = d3.geoPath().projection(projection);
+
+    function zoneColor(intensity) {
+      var h = 222 - intensity*8, s = 62 + intensity*28, l = 26 + intensity*30;
+      return 'hsl('+h+','+s+'%,'+l+'%)';
+    }
+    function showTooltip(event, z) {
+      var maxPct = d3.max(z.rows, function(r){return r.pct;});
+      var html = '<div class="tt-state-name">'+z.label+'</div>';
+      z.rows.forEach(function(row){
+        var bw = Math.round((row.pct/maxPct)*100);
+        html += '<div class="tt-zone-row"><span class="tt-zone-label">'+row.zone+'</span><div class="tt-zone-track"><div class="tt-zone-fill" style="width:'+bw+'%"></div></div><span class="tt-zone-pct">'+row.pct+'%</span></div>';
+      });
+      tooltip.innerHTML = html; tooltip.style.display = 'block';
+      var tx = event.clientX+16, ty = event.clientY-10;
+      var tw = tooltip.offsetWidth||196, th = tooltip.offsetHeight||100;
+      if (tx+tw > window.innerWidth-8) tx = event.clientX-tw-16;
+      if (ty+th > window.innerHeight-8) ty = event.clientY-th-10;
+      tooltip.style.left = tx+'px'; tooltip.style.top = ty+'px';
+    }
+
+    g.selectAll('path').data(GEO.features).join('path')
+      .attr('d', path)
+      .attr('fill', function(d){ var z=matchZone(d.properties.n); return z ? zoneColor(z.intensity) : '#0c1220'; })
+      .attr('stroke', function(d){ return matchZone(d.properties.n) ? 'rgba(96,165,250,.22)' : '#111c2e'; })
+      .attr('stroke-width', function(d){ return matchZone(d.properties.n) ? .9 : .4; })
+      .style('animation', function(d,i){ return 'state-in .5s ease '+(i*.014)+'s both'; })
+      .on('mousemove', function(event,d){ var z=matchZone(d.properties.n); if(z) showTooltip(event,z); })
+      .on('mouseleave', function(){ tooltip.style.display='none'; });
+
+    var cdmxFeat = GEO.features.filter(function(f){ return f.properties.n==='Distrito Federal'; })[0];
+    if (cdmxFeat) {
+      var c = path.centroid(cdmxFeat);
+      var cdmxZ = ZONES.cdmx;
+      var cg = g.append('g').attr('transform','translate('+c[0]+','+c[1]+')');
+      cg.append('circle').attr('r',6).attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',1.4).attr('class','cdmx-pulse');
+      cg.append('circle').attr('r',5.5).attr('fill','none').attr('stroke','rgba(96,165,250,.3)').attr('stroke-width',1);
+      cg.append('circle').attr('r',3.8).attr('fill','#60a5fa').attr('stroke','#0f1520').attr('stroke-width',1.2)
+        .style('cursor','pointer')
+        .on('mousemove', function(event){ showTooltip(event,cdmxZ); })
+        .on('mouseleave', function(){ tooltip.style.display='none'; });
+    }
+
+    var zoom = d3.zoom().scaleExtent([1,12]).translateExtent([[0,0],[W,H]])
+      .on('zoom', function(event){
+        var t = event.transform; g.attr('transform',t);
+        var k = t.k;
+        g.selectAll('path').attr('stroke-width', function(d){ return matchZone(d.properties.n) ? Math.max(.12,.9/k) : Math.max(.06,.4/k); });
+        tooltip.style.display = 'none';
+      });
+    svg.call(zoom).on('dblclick.zoom', function(){
+      svg.transition().duration(420).ease(d3.easeCubicOut).call(zoom.transform,d3.zoomIdentity);
+    });
+    function zoomBy(f){ svg.transition().duration(300).ease(d3.easeCubicOut).call(zoom.scaleBy,f); }
+    function zoomReset(){ svg.transition().duration(380).ease(d3.easeCubicOut).call(zoom.transform,d3.zoomIdentity); }
+    var zi=document.getElementById('map-zoom-in'), zo=document.getElementById('map-zoom-out'), zr=document.getElementById('map-zoom-reset');
+    if(zi) zi.onclick=function(){zoomBy(1.7);};
+    if(zo) zo.onclick=function(){zoomBy(0.59);};
+    if(zr) zr.onclick=zoomReset;
+  }
+
+  if (typeof d3 !== 'undefined') renderMap();
+  else document.currentScript.previousElementSibling.addEventListener('load', renderMap);
+})();
+
+/* ── TABS ──────────────────────────────────────────────────────── */
+function setTab(el) {
+  el.closest('.tabs-bar').querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+/* ── FILTROS ───────────────────────────────────────────────────── */
+document.querySelectorAll('.pf').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    btn.closest('.prop-filters').querySelectorAll('.pf').forEach(function(b){ b.classList.remove('on'); });
+    btn.classList.add('on');
+  });
+});
+</script>
+</body>
+</html>

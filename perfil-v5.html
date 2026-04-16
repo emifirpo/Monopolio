@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Monopolio — Laura Gómez · V5 Vista Mapa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<style>
+/* ─── TOKENS (Figma exacto) ────────────────────────────────────── */
+:root {
+  --bg:                #121212;
+  --bg-surface:        #1a1a1a;
+  --bg-interaction:    #2d2d2d;
+  --border-divider:    #2d2d2d;
+  --border-exclusion:  #222222;
+  --border-selected:   #2759cd;
+  --border-interact:   #404040;
+  --content-primary:   #f7f7f7;
+  --content-secondary: #a6a6a6;
+  --content-placeholder:#898989;
+  --content-selected:  #cdddff;
+  --content-dark:      #2d2d2d;
+  --btn-primary:       #2759cd;
+  --btn-secondary:     #2d2d2d;
+  --brand-1:           #0368fe;
+  --brand-4:           #e6f0ff;
+  --badge-neutral:     #2d2d2d;
+  --green:             #22c55e;
+  --r-full:            999px;
+  --r-xl:              16px;
+  --r-lg:              12px;
+  --r-md:              8px;
+  --r-sm:              4px;
+  --header-h:          72px;
+  --sidebar-w:         352px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  font-family: 'Red Hat Display', sans-serif;
+  background: var(--bg);
+  color: var(--content-primary);
+  -webkit-font-smoothing: antialiased;
+  height: 100%; overflow: hidden;
+}
+button { font-family: inherit; cursor: pointer; border: none; }
+a { color: inherit; text-decoration: none; }
+svg { display: block; }
+
+/* ─── HEADER (idéntico a V3) ───────────────────────────────────── */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  height: var(--header-h);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border-divider);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+}
+.logo { display: flex; align-items: center; gap: 6px; text-decoration: none; flex-shrink: 0; width: 169px; }
+.logo-text { font-size: 18px; font-weight: 700; color: var(--content-primary); letter-spacing: -0.3px; }
+.searchbox {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  width: 626px;
+  background: var(--badge-neutral);
+  border: 1px solid var(--border-interact);
+  border-radius: 55px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px;
+  box-shadow: 0 5px 30px rgba(24,26,61,.10);
+}
+.search-input {
+  flex: 1; background: var(--bg-interaction);
+  border-radius: var(--r-full); height: 40px;
+  display: flex; align-items: center; gap: 8px; padding: 0 12px; overflow: hidden;
+}
+.search-input svg { flex-shrink: 0; }
+.search-input span { font-size: 16px; font-weight: 500; color: var(--content-placeholder); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.search-filters { display: flex; align-items: center; gap: 12px; flex-shrink: 0; padding-right: 4px; }
+.chip {
+  background: var(--bg-interaction); border-radius: var(--r-full);
+  display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px;
+  font-size: 14px; font-weight: 700; color: var(--content-primary); cursor: pointer; white-space: nowrap;
+}
+.btn-buscar {
+  background: var(--btn-primary); border-radius: var(--r-full);
+  height: 40px; min-width: 120px; padding: 0 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: #fcfcfc;
+  letter-spacing: 0.14px; cursor: pointer; border: none;
+  font-family: inherit; flex-shrink: 0; transition: opacity .15s;
+}
+.btn-buscar:hover { opacity: .88; }
+.header-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; width: 169px; justify-content: flex-end; }
+.header-divider { width: 1px; height: 28px; background: var(--border-divider); }
+.icon-btn {
+  width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+  border-radius: var(--r-full); background: transparent; border: none; cursor: pointer;
+}
+.icon-btn:hover { background: rgba(255,255,255,.06); }
+.avatar-sm {
+  width: 40px; height: 40px; border-radius: var(--r-full);
+  border: 2px solid var(--border-exclusion);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: white; cursor: pointer;
+}
+
+/* ─── SHELL ────────────────────────────────────────────────────── */
+.shell {
+  position: fixed;
+  top: var(--header-h); bottom: 0;
+  left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 1200px;
+  display: flex;
+}
+
+/* ─── SIDEBAR ──────────────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-divider);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow: hidden;
+}
+
+/* Scrollable body */
+.sb-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+.sb-body::-webkit-scrollbar { width: 4px; }
+.sb-body::-webkit-scrollbar-track { background: transparent; }
+.sb-body::-webkit-scrollbar-thumb { background: var(--border-interact); border-radius: 2px; }
+
+/* ── SECTION DIVIDER ── */
+.sb-divider { height: 1px; background: var(--border-divider); margin: 0 20px; }
+
+/* ── PROFILE HERO ── */
+.sb-hero {
+  padding: 20px 20px 16px;
+}
+.sb-hero-top { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+.sb-avatar {
+  width: 56px; height: 56px; border-radius: var(--r-full);
+  background: linear-gradient(135deg, #1e3a5f, #0f2040);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700; color: white;
+  flex-shrink: 0; border: 2px solid var(--border-exclusion);
+}
+.sb-name-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.sb-name { font-size: 20px; font-weight: 700; color: var(--content-primary); letter-spacing: -.3px; }
+.sb-verified {
+  display: flex; align-items: center; gap: 3px;
+  background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.2);
+  border-radius: var(--r-full); padding: 2px 8px;
+  font-size: 10px; font-weight: 700; color: var(--green); white-space: nowrap;
+}
+.sb-agency { font-size: 12px; font-weight: 500; color: var(--content-secondary); margin-top: 3px; }
+.sb-rating-row { display: flex; align-items: center; gap: 6px; }
+.sb-stars { color: #f59e0b; font-size: 13px; letter-spacing: 1px; }
+.sb-rating-val { font-size: 13px; font-weight: 700; color: var(--content-primary); }
+.sb-rating-ct { font-size: 12px; font-weight: 500; color: var(--content-secondary); }
+
+/* ── MICRO STATS ── */
+.sb-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--border-divider);
+  border-bottom: 1px solid var(--border-divider);
+  margin: 0;
+}
+.sb-stat {
+  padding: 12px 20px;
+  display: flex; flex-direction: column; gap: 2px;
+  border-right: 1px solid var(--border-divider);
+  border-bottom: 1px solid var(--border-divider);
+}
+.sb-stat:nth-child(2n) { border-right: none; }
+.sb-stat:nth-last-child(-n+2) { border-bottom: none; }
+.sb-stat-val { font-size: 18px; font-weight: 700; color: var(--content-primary); }
+.sb-stat-lbl { font-size: 10px; font-weight: 500; color: var(--content-secondary); text-transform: uppercase; letter-spacing: .5px; }
+
+/* ── BIO / ESPECIALIZACIÓN ── */
+.sb-bio { padding: 16px 20px; }
+.sb-section-lbl {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px;
+  color: var(--content-secondary); margin-bottom: 8px;
+}
+.sb-bio-text { font-size: 13px; font-weight: 500; line-height: 1.65; color: var(--content-secondary); }
+.sb-bio-text strong { color: var(--content-primary); font-weight: 700; }
+.sb-bio-pills { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
+.sb-pill {
+  padding: 3px 9px; border-radius: var(--r-full);
+  font-size: 11px; font-weight: 700;
+  background: var(--bg-interaction); color: var(--content-secondary);
+  border: 1px solid var(--border-divider);
+}
+
+/* ── ZONAS ── */
+.sb-zones { padding: 16px 20px; }
+.zone-bar-item { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+.zone-bar-item:last-child { margin-bottom: 0; }
+.zone-bar-header { display: flex; align-items: center; justify-content: space-between; }
+.zone-bar-name { font-size: 12px; font-weight: 600; color: var(--content-primary); }
+.zone-bar-meta { display: flex; align-items: center; gap: 8px; }
+.zone-bar-pct { font-size: 12px; font-weight: 700; color: var(--content-primary); }
+.zone-bar-ops { font-size: 11px; font-weight: 500; color: var(--content-secondary); }
+.zone-bar-track { height: 4px; background: rgba(255,255,255,.07); border-radius: 2px; overflow: hidden; }
+.zone-bar-fill { height: 100%; background: var(--btn-primary); border-radius: 2px; }
+
+/* ── DISPONIBILIDAD ── */
+.sb-avail { padding: 16px 20px; }
+.avail-status-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.avail-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 3px rgba(34,197,94,.18);
+  flex-shrink: 0;
+}
+.avail-status-lbl { font-size: 13px; font-weight: 700; color: var(--content-primary); }
+.avail-hours { font-size: 12px; font-weight: 500; color: var(--content-secondary); margin-bottom: 10px; }
+.day-row { display: flex; gap: 5px; }
+.day-chip {
+  width: 30px; height: 30px; border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  background: var(--bg-interaction); color: var(--content-placeholder);
+  border: 1px solid var(--border-divider);
+}
+.day-chip.on {
+  background: rgba(39,89,205,.15); color: var(--content-selected);
+  border-color: rgba(39,89,205,.3);
+}
+.resp-row { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; margin-bottom: 5px; }
+.resp-label { font-size: 12px; font-weight: 500; color: var(--content-secondary); }
+.resp-value { font-size: 13px; font-weight: 700; color: var(--content-primary); }
+.resp-track { height: 4px; background: rgba(255,255,255,.07); border-radius: 2px; overflow: hidden; }
+.resp-fill { height: 100%; background: var(--green); border-radius: 2px; }
+.resp-sub { font-size: 11px; color: var(--content-secondary); margin-top: 5px; }
+
+/* ── VERIFICACIONES ── */
+.sb-verif { padding: 16px 20px; }
+.verif-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--border-divider);
+}
+.verif-row:first-of-type { padding-top: 0; }
+.verif-row:last-child { border-bottom: none; padding-bottom: 0; }
+.verif-check {
+  width: 18px; height: 18px; border-radius: 5px;
+  background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.22);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.verif-name { font-size: 12px; font-weight: 700; color: var(--content-primary); }
+.verif-desc { font-size: 11px; color: var(--content-secondary); margin-top: 2px; }
+.cert-badge {
+  display: inline-flex; padding: 2px 7px; border-radius: var(--r-full);
+  font-size: 10px; font-weight: 700; margin-top: 3px;
+  background: rgba(39,89,205,.15); color: var(--content-selected);
+  border: 1px solid rgba(39,89,205,.3);
+}
+
+/* ── CONTACT ROWS ── */
+.sb-contact { padding: 16px 20px 0; }
+.contact-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid var(--border-divider);
+}
+.contact-row:first-of-type { padding-top: 0; }
+.contact-row:last-child { border-bottom: none; }
+.contact-icon {
+  width: 30px; height: 30px; border-radius: var(--r-md);
+  background: var(--bg-interaction); border: 1px solid var(--border-divider);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.contact-lbl { font-size: 11px; font-weight: 500; color: var(--content-secondary); }
+.contact-val { font-size: 12px; font-weight: 700; color: var(--content-primary); }
+
+/* ── FOOTER CTAs ── */
+.sb-footer {
+  padding: 14px 16px 16px;
+  border-top: 1px solid var(--border-divider);
+  display: flex; flex-direction: column; gap: 8px;
+  flex-shrink: 0;
+}
+.sb-cta-primary {
+  background: var(--btn-primary); border-radius: var(--r-full);
+  height: 46px; display: flex; align-items: center; justify-content: center;
+  gap: 8px; font-size: 14px; font-weight: 700; color: #fcfcfc;
+  cursor: pointer; border: none; font-family: inherit; transition: opacity .15s;
+}
+.sb-cta-primary:hover { opacity: .88; }
+.sb-cta-secondary {
+  background: var(--btn-secondary); border-radius: var(--r-full);
+  height: 42px; display: flex; align-items: center; justify-content: center;
+  gap: 7px; font-size: 13px; font-weight: 700; color: var(--content-primary);
+  cursor: pointer; border: 1px solid var(--border-interact); font-family: inherit; transition: opacity .15s;
+}
+.sb-cta-secondary:hover { opacity: .75; }
+
+/* ─── MAP AREA ─────────────────────────────────────────────────── */
+.map-area { flex: 1; position: relative; background: #0c1220; }
+#map { width: 100%; height: 100%; background: #0c1220; }
+
+/* ─── LEAFLET OVERRIDES (dark) ─────────────────────────────────── */
+.leaflet-container { font-family: 'Red Hat Display', sans-serif !important; }
+.leaflet-control-zoom {
+  border: 1px solid rgba(255,255,255,.1) !important;
+  border-radius: 8px !important; overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,.5) !important;
+}
+.leaflet-control-zoom a {
+  background: rgba(18,18,18,.95) !important;
+  color: #a6a6a6 !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+  font-size: 16px !important; line-height: 28px !important;
+  width: 30px !important; height: 30px !important;
+}
+.leaflet-control-zoom a:hover { background: rgba(39,89,205,.25) !important; color: #f7f7f7 !important; }
+.leaflet-control-attribution { background: rgba(18,18,18,.75) !important; color: #555 !important; font-size: 10px !important; }
+.leaflet-control-attribution a { color: #666 !important; }
+
+/* Custom popup */
+.leaflet-popup-content-wrapper {
+  background: #1a1a1a !important;
+  border: 1px solid #2d2d2d !important;
+  border-radius: 12px !important; padding: 0 !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,.7) !important; overflow: hidden;
+}
+.leaflet-popup-tip-container { display: none !important; }
+.leaflet-popup-content { margin: 0 !important; }
+.leaflet-popup-close-button { color: #a6a6a6 !important; top: 10px !important; right: 10px !important; font-size: 18px !important; font-weight: 700 !important; z-index: 10; }
+.leaflet-popup-close-button:hover { color: #f7f7f7 !important; }
+
+.popup-card { width: 220px; padding: 14px; }
+.popup-thumb {
+  width: 100%; height: 100px; border-radius: 8px;
+  background: #1e2d40; margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid #2d2d2d;
+}
+.popup-thumb svg { opacity: .2; }
+.popup-type { display: inline-flex; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; margin-bottom: 6px; }
+.popup-type.venta { color: #cdddff; border: 1px solid rgba(39,89,205,.3); background: rgba(39,89,205,.12); }
+.popup-type.renta { color: rgba(34,197,94,.9); border: 1px solid rgba(34,197,94,.25); background: rgba(34,197,94,.08); }
+.popup-price { font-size: 16px; font-weight: 700; color: #f7f7f7; margin-bottom: 3px; }
+.popup-zone { font-size: 12px; font-weight: 500; color: #a6a6a6; margin-bottom: 3px; }
+.popup-meta { font-size: 11px; color: #666; margin-bottom: 12px; }
+.popup-btn {
+  width: 100%; height: 36px; border-radius: 999px;
+  background: #2759cd; border: none; cursor: pointer;
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 13px; font-weight: 700; color: white;
+  display: flex; align-items: center; justify-content: center; transition: opacity .15s;
+}
+.popup-btn:hover { opacity: .88; }
+
+/* custom marker pill */
+.custom-marker { display: flex; align-items: center; justify-content: center; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER (idéntico a V3) ── -->
+<header class="header">
+  <a class="logo" href="index.html">
+    <span class="logo-text">Monopolio</span>
+  </a>
+  <div class="searchbox">
+    <div class="search-input">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#898989">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <span>Colonia, dirección o lugar</span>
+    </div>
+    <div class="search-filters">
+      <div class="chip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Rentar
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="chip">
+        Precio
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <button class="btn-buscar">Buscar</button>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-divider"></div>
+    <button class="icon-btn">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a6a6a6" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+    </button>
+    <div class="avatar-sm">AN</div>
+  </div>
+</header>
+
+<!-- ── SHELL ── -->
+<div class="shell">
+
+  <!-- ════════════════════════════════════════
+       SIDEBAR — Info completa del asesor
+  ════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sb-body">
+
+      <!-- ── PERFIL HERO ── -->
+      <div class="sb-hero">
+        <div class="sb-hero-top">
+          <div class="sb-avatar">LG</div>
+          <div>
+            <div class="sb-name-row">
+              <span class="sb-name">Laura Gómez</span>
+              <span class="sb-verified">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Verificado
+              </span>
+            </div>
+            <div class="sb-agency">Grupo Neri Inmobiliaria · Asesor Inmobiliario</div>
+          </div>
+        </div>
+        <div class="sb-rating-row">
+          <span class="sb-stars">★★★★★</span>
+          <span class="sb-rating-val">4.9</span>
+          <span class="sb-rating-ct">· 127 reseñas · 8 años</span>
+        </div>
+      </div>
+
+      <!-- ── MICRO STATS (2×2 grid) ── -->
+      <div class="sb-stats">
+        <div class="sb-stat">
+          <span class="sb-stat-val">47</span>
+          <span class="sb-stat-lbl">Props. activas</span>
+        </div>
+        <div class="sb-stat">
+          <span class="sb-stat-val">186</span>
+          <span class="sb-stat-lbl">Ops. cerradas</span>
+        </div>
+        <div class="sb-stat">
+          <span class="sb-stat-val">< 2 h</span>
+          <span class="sb-stat-lbl">Resp. promedio</span>
+        </div>
+        <div class="sb-stat">
+          <span class="sb-stat-val">Desde 2019</span>
+          <span class="sb-stat-lbl">En Monopolio</span>
+        </div>
+      </div>
+
+      <!-- ── BIO / ESPECIALIZACIÓN ── -->
+      <div class="sb-bio">
+        <div class="sb-section-lbl">Especialización</div>
+        <div class="sb-bio-text">
+          Especialista en <strong>propiedades premium</strong> en CDMX, con foco en Polanco, Condesa y Roma Norte. Manejo carteras desde <strong>$1.5M hasta $25M MXN</strong>, tanto venta como renta de largo plazo.
+        </div>
+        <div class="sb-bio-pills">
+          <span class="sb-pill">Departamentos</span>
+          <span class="sb-pill">Casas</span>
+          <span class="sb-pill">Luxury</span>
+          <span class="sb-pill">Inversión</span>
+        </div>
+      </div>
+
+      <div class="sb-divider"></div>
+
+      <!-- ── ZONAS DE OPERACIÓN ── -->
+      <div class="sb-zones">
+        <div class="sb-section-lbl">Zonas de operación</div>
+        <div class="zone-bar-item">
+          <div class="zone-bar-header">
+            <span class="zone-bar-name">CDMX</span>
+            <div class="zone-bar-meta">
+              <span class="zone-bar-pct">72%</span>
+              <span class="zone-bar-ops">134 ops</span>
+            </div>
+          </div>
+          <div class="zone-bar-track"><div class="zone-bar-fill" style="width:72%"></div></div>
+        </div>
+        <div class="zone-bar-item">
+          <div class="zone-bar-header">
+            <span class="zone-bar-name">Estado de México</span>
+            <div class="zone-bar-meta">
+              <span class="zone-bar-pct">18%</span>
+              <span class="zone-bar-ops">33 ops</span>
+            </div>
+          </div>
+          <div class="zone-bar-track"><div class="zone-bar-fill" style="width:18%"></div></div>
+        </div>
+        <div class="zone-bar-item">
+          <div class="zone-bar-header">
+            <span class="zone-bar-name">Querétaro</span>
+            <div class="zone-bar-meta">
+              <span class="zone-bar-pct">10%</span>
+              <span class="zone-bar-ops">19 ops</span>
+            </div>
+          </div>
+          <div class="zone-bar-track"><div class="zone-bar-fill" style="width:10%"></div></div>
+        </div>
+      </div>
+
+      <div class="sb-divider"></div>
+
+      <!-- ── DISPONIBILIDAD ── -->
+      <div class="sb-avail">
+        <div class="sb-section-lbl">Disponibilidad</div>
+        <div class="avail-status-row">
+          <div class="avail-dot"></div>
+          <span class="avail-status-lbl">Disponible ahora</span>
+        </div>
+        <div class="avail-hours">Lun–Sáb · 9:00 am – 7:00 pm</div>
+        <div class="day-row">
+          <div class="day-chip on">L</div>
+          <div class="day-chip on">M</div>
+          <div class="day-chip on">X</div>
+          <div class="day-chip on">J</div>
+          <div class="day-chip on">V</div>
+          <div class="day-chip on">S</div>
+          <div class="day-chip">D</div>
+        </div>
+        <div class="resp-row">
+          <span class="resp-label">Tasa de respuesta</span>
+          <span class="resp-value">92%</span>
+        </div>
+        <div class="resp-track"><div class="resp-fill" style="width:92%"></div></div>
+        <div class="resp-sub">Responde en menos de 2 horas</div>
+      </div>
+
+      <div class="sb-divider"></div>
+
+      <!-- ── CONTACTO ── -->
+      <div class="sb-contact">
+        <div class="sb-section-lbl">Contacto</div>
+        <div class="contact-row">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;color:#22c55e"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+          </div>
+          <div>
+            <div class="contact-lbl">WhatsApp</div>
+            <div class="contact-val">+52 55 7314 1015</div>
+          </div>
+        </div>
+        <div class="contact-row">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#a6a6a6"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.7A2 2 0 012.18 1h3a2 2 0 012 1.72c.13 1 .37 1.97.72 2.9a2 2 0 01-.45 2.11L6.91 8.27a16 16 0 006.82 6.82l.54-.54a2 2 0 012.11-.45c.93.35 1.9.59 2.9.72A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div>
+            <div class="contact-lbl">Teléfono agencia</div>
+            <div class="contact-val">+52 55 7155 4758</div>
+          </div>
+        </div>
+        <div class="contact-row">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#a6a6a6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <div class="contact-lbl">Correo</div>
+            <div class="contact-val">ana@gruponeri.mx</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sb-divider" style="margin-top:12px"></div>
+
+      <!-- ── VERIFICACIONES ── -->
+      <div class="sb-verif">
+        <div class="sb-section-lbl">Verificaciones</div>
+        <div class="verif-row">
+          <div class="verif-check"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3.5" style="width:10px;height:10px"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div>
+            <div class="verif-name">Identidad verificada</div>
+            <div class="verif-desc">INE · Cédula profesional</div>
+          </div>
+        </div>
+        <div class="verif-row">
+          <div class="verif-check"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3.5" style="width:10px;height:10px"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div>
+            <div class="verif-name">Agencia registrada</div>
+            <div class="verif-desc">Grupo Neri Inmobiliaria · 8 años</div>
+          </div>
+        </div>
+        <div class="verif-row">
+          <div class="verif-check"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3.5" style="width:10px;height:10px"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div>
+            <div class="verif-name">Certificaciones</div>
+            <span class="cert-badge">AMPI</span>
+          </div>
+        </div>
+        <div class="verif-row">
+          <div class="verif-check"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3.5" style="width:10px;height:10px"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div>
+            <div class="verif-name">Historial en Monopolio</div>
+            <div class="verif-desc">Activo desde 2019</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- bottom padding -->
+      <div style="height:16px"></div>
+
+    </div><!-- /sb-body -->
+
+    <!-- ── CTAs FIJOS ── -->
+    <div class="sb-footer">
+      <button class="sb-cta-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+        Contactar por WhatsApp
+      </button>
+      <button class="sb-cta-secondary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Enviar mensaje
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ════════════════════════════════════════
+       MAPA — Propiedades del asesor
+  ════════════════════════════════════════ -->
+  <div class="map-area">
+    <div id="map"></div>
+  </div>
+
+</div><!-- /shell -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+var PROPS = [
+  { id:1, lat:19.4116, lng:-99.1733, price:'$3,200,000',  zone:'Condesa',   desc:'Depto 3 recámaras · 120 m²', type:'venta', typeLabel:'Venta' },
+  { id:2, lat:19.4318, lng:-99.1976, price:'$22,000/mes',  zone:'Polanco',   desc:'Depto 2 recámaras · 95 m²',  type:'renta', typeLabel:'Renta' },
+  { id:3, lat:19.3528, lng:-99.1619, price:'$5,800,000',  zone:'Coyoacán',  desc:'Casa con jardín · 280 m²',   type:'venta', typeLabel:'Venta' },
+  { id:4, lat:19.4162, lng:-99.1522, price:'$2,850,000',  zone:'Roma Norte', desc:'Depto · 88 m²',              type:'venta', typeLabel:'Venta' },
+  { id:5, lat:19.3977, lng:-99.1645, price:'$18,200/mes', zone:'Narvarte',  desc:'Depto 2 rec. · 80 m²',       type:'renta', typeLabel:'Renta' },
+  { id:6, lat:19.2948, lng:-99.1536, price:'$4,100,000',  zone:'Tlalpan',   desc:'Casa residencial · 320 m²',  type:'venta', typeLabel:'Venta' }
+];
+
+var map = L.map('map', {
+  center: [19.3900, -99.1700],
+  zoom: 12,
+  zoomControl: true,
+  attributionControl: true
+});
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 19
+}).addTo(map);
+
+function markerIcon(prop) {
+  var bg = prop.type === 'renta' ? 'rgba(34,197,94,.92)' : 'rgba(39,89,205,.95)';
+  var html = '<div style="background:' + bg + ';color:white;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:700;font-family:Red Hat Display,sans-serif;white-space:nowrap;box-shadow:0 3px 14px rgba(0,0,0,.55);border:1.5px solid rgba(255,255,255,.15)">' + prop.price + '</div>';
+  return L.divIcon({ html: html, className: 'custom-marker', iconAnchor: [0,0], popupAnchor: [0,-8] });
+}
+
+function popupHTML(p) {
+  return '<div class="popup-card">'
+    + '<div class="popup-thumb"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>'
+    + '<span class="popup-type ' + p.type + '">' + p.typeLabel + '</span>'
+    + '<div class="popup-price">' + p.price + '</div>'
+    + '<div class="popup-zone">' + p.zone + '</div>'
+    + '<div class="popup-meta">' + p.desc + '</div>'
+    + '<button class="popup-btn">Contactar asesor</button>'
+    + '</div>';
+}
+
+PROPS.forEach(function(p, i) {
+  var m = L.marker([p.lat, p.lng], { icon: markerIcon(p) }).addTo(map);
+  m.bindPopup(popupHTML(p), { maxWidth: 240, minWidth: 220, closeButton: true });
+  if (i === 0) setTimeout(function(){ m.openPopup(); }, 700);
+});
+</script>
+</body>
+</html>
