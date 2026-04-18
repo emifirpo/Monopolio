@@ -362,6 +362,56 @@ svg { display: block; }
 
 /* custom marker pill */
 .custom-marker { display: flex; align-items: center; justify-content: center; }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════ */
+@media (max-width: 1100px) {
+  :root { --sidebar-w: 42vw; }
+  .searchbox { width: 320px; }
+  .search-filters { display: none; }
+}
+
+@media (max-width: 768px) {
+  :root { --header-h: 56px; --sidebar-w: 100vw; }
+  .header { padding: 0 14px; }
+  .searchbox { display: none; }
+  .logo { width: auto; }
+  .header-right { width: auto; gap: 8px; }
+  .icon-btn { width: 36px; height: 36px; }
+  .avatar-sm { width: 32px; height: 32px; font-size: 11px; }
+
+  /* Stack sidebar over map — sidebar scrolls, map hidden initially */
+  .shell { flex-direction: column; position: static; overflow: visible; height: auto; }
+  .sidebar {
+    width: 100%;
+    position: static;
+    height: auto;
+    max-height: 60vh;
+    overflow-y: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-divider);
+  }
+  .sb-body { overflow: visible; }
+
+  /* Map below sidebar */
+  .map-pane {
+    position: static;
+    width: 100%;
+    height: 360px;
+  }
+  #map { height: 360px; }
+
+  .sb-name { font-size: 16px; }
+  .sb-avatar { width: 44px; height: 44px; font-size: 14px; }
+  .sb-ctas { flex-direction: column; }
+  .sb-cta-msg, .sb-cta-wa { width: 100%; }
+}
+
+@media (max-width: 420px) {
+  .map-pane, #map { height: 280px; }
+  .sidebar { max-height: 55vh; }
+}
 </style>
 </head>
 <body>

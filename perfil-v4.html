@@ -527,6 +527,50 @@ svg { display: block; }
 .tt-zone-track { flex: 1; height: 3px; background: rgba(255,255,255,.1); border-radius: 2px; overflow: hidden; }
 .tt-zone-fill { height: 100%; background: #3b82f6; border-radius: 2px; }
 .tt-zone-pct { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.9); width: 26px; text-align: right; flex-shrink: 0; }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════ */
+@media (max-width: 1100px) {
+  .searchbox { width: 380px; }
+  .search-filters { display: none; }
+  .bento {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  :root { --header-h: 56px; }
+  .header { padding: 0 14px; }
+  .searchbox { display: none; }
+  .logo { width: auto; }
+  .header-right { width: auto; gap: 8px; }
+  .icon-btn { width: 36px; height: 36px; }
+  .avatar-sm { width: 32px; height: 32px; font-size: 11px; }
+
+  .content { padding: 16px 12px 48px; gap: 12px; }
+
+  .hero-pattern-zone { height: 80px; }
+  .hero-info-zone { flex-wrap: wrap; padding: 0 16px 16px; gap: 12px; }
+  .hero-cta { margin-left: 0; }
+  .hero-name { font-size: 20px; }
+
+  .bento {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 12px;
+  }
+
+  /* Override explicit grid placement on bento items */
+  .bento > * { grid-column: auto !important; grid-row: auto !important; }
+
+  .prop-scroll-track { gap: 10px; }
+}
+
+@media (max-width: 420px) {
+  .hero-meta-row { flex-wrap: wrap; gap: 6px; }
+}
 </style>
 </head>
 <body>

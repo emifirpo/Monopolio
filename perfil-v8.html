@@ -492,6 +492,63 @@ svg { display: block; }
 }
 .popup-btn:hover { opacity: .88; }
 .custom-marker { display: flex; align-items: center; justify-content: center; }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════ */
+@media (max-width: 1100px) {
+  .searchbox { width: 360px; }
+  .search-filters { display: none; }
+  .hero-section { grid-template-columns: 1fr; min-height: auto; }
+  .map-col { min-height: 320px; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .sobre-grid { grid-template-columns: 1fr; }
+  .sobre-modules { grid-template-columns: 1fr; }
+  .charts-row { grid-template-columns: 1fr; }
+  .charts-row-3 { grid-template-columns: 1fr 1fr; }
+  .servicios-grid { grid-template-columns: 1fr; }
+  .tab-panel { padding: 24px 20px 64px; }
+}
+
+@media (max-width: 768px) {
+  :root { --header-h: 56px; }
+  .header { padding: 0 14px; }
+  .searchbox { display: none; }
+  .logo { width: auto; }
+  .header-right { width: auto; gap: 8px; }
+  .icon-btn { width: 36px; height: 36px; }
+  .avatar-sm { width: 32px; height: 32px; font-size: 11px; }
+
+  .hero-section { grid-template-columns: 1fr; }
+  .profile-col { padding: 24px 16px 20px; }
+  .map-col { height: 300px; min-height: 300px; }
+
+  .prof-name { font-size: 22px; }
+  .prof-avatar { width: 72px; height: 72px; }
+
+  /* CTA buttons */
+  .prof-ctas { flex-direction: column; }
+  .cta-main { width: 100%; }
+
+  /* Tabs */
+  .tabs-bar { padding: 0 16px; overflow-x: auto; }
+  .tab-panel { padding: 20px 14px 64px; }
+
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .charts-row { grid-template-columns: 1fr; }
+  .charts-row-3 { grid-template-columns: 1fr; }
+  .sobre-grid { grid-template-columns: 1fr; }
+  .sobre-modules { grid-template-columns: 1fr; }
+  .props-grid { grid-template-columns: 1fr; }
+  .servicios-grid { grid-template-columns: 1fr; }
+  .rev-grid { grid-template-columns: 1fr; }
+  .rev-summary { grid-template-columns: 1fr; gap: 16px; }
+}
+
+@media (max-width: 420px) {
+  .map-col { height: 240px; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+}
 </style>
 </head>
 <body>

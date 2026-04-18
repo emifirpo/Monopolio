@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Monopolio — Laura Gómez · V9</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<style>
+:root{
+  --bg:#121212;--bg-surface:#1a1a1a;--bg-card:#1a1a1a;--bg-interaction:#2d2d2d;--badge-neutral:#2d2d2d;
+  --border-divider:#2d2d2d;--border-exclusion:#222222;--border-interact:#404040;
+  --content-primary:#f7f7f7;--content-secondary:#a6a6a6;--content-placeholder:#898989;
+  --content-selected:#cdddff;--btn-primary:#2759cd;--green:#22c55e;--purple:#7c3aed;
+  --r-full:999px;--r-xl:16px;--r-lg:12px;--r-md:8px;--r-sm:4px;
+  --header-h:72px;--sidebar-w:72px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:'Red Hat Display',sans-serif;background:var(--bg);color:var(--content-primary);-webkit-font-smoothing:antialiased;min-height:100vh;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+a{color:inherit;text-decoration:none;}svg{display:block;}
+/* HEADER */
+.header{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--header-h);background:var(--bg);border-bottom:1px solid var(--border-divider);display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
+.logo{display:flex;align-items:center;gap:6px;text-decoration:none;flex-shrink:0;width:169px;}
+.logo-text{font-size:18px;font-weight:700;color:var(--content-primary);letter-spacing:-0.3px;}
+.searchbox{position:absolute;left:50%;transform:translateX(-50%);width:626px;background:var(--badge-neutral);border:1px solid var(--border-interact);border-radius:55px;display:flex;align-items:center;justify-content:space-between;padding:4px;box-shadow:0 5px 30px rgba(24,26,61,.10);}
+.search-input{flex:1;background:var(--bg-interaction);border-radius:var(--r-full);height:40px;display:flex;align-items:center;gap:8px;padding:0 12px;overflow:hidden;}
+.search-input svg{flex-shrink:0;}
+.search-input span{font-size:16px;font-weight:500;color:var(--content-placeholder);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.search-filters{display:flex;align-items:center;gap:12px;flex-shrink:0;padding-right:4px;}
+.chip{background:var(--bg-interaction);border-radius:var(--r-full);display:flex;align-items:center;gap:8px;height:32px;padding:0 12px;font-size:14px;font-weight:700;color:var(--content-primary);cursor:pointer;white-space:nowrap;}
+.btn-buscar{background:var(--btn-primary);border-radius:var(--r-full);height:40px;min-width:120px;padding:0 12px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fcfcfc;letter-spacing:.14px;cursor:pointer;border:none;font-family:inherit;flex-shrink:0;transition:opacity .15s;}
+.btn-buscar:hover{opacity:.88;}
+.header-right{display:flex;align-items:center;gap:12px;flex-shrink:0;width:169px;justify-content:flex-end;}
+.header-divider{width:1px;height:28px;background:var(--border-divider);}
+.icon-btn{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-full);background:transparent;border:none;cursor:pointer;}
+.icon-btn:hover{background:rgba(255,255,255,.06);}
+.avatar-sm{width:40px;height:40px;border-radius:var(--r-full);border:2px solid var(--border-exclusion);background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;cursor:pointer;}
+/* LAYOUT */
+.app-layout{padding-top:var(--header-h);display:flex;min-height:100vh;}
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;border-right:1px solid var(--border-divider);padding:12px 0;display:flex;flex-direction:column;gap:2px;position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));}
+.side-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 4px;margin:0 8px;border-radius:var(--r-md);color:var(--content-secondary);font-size:9px;font-weight:600;text-align:center;cursor:pointer;letter-spacing:.3px;text-transform:uppercase;transition:background .12s,color .12s;}
+.side-btn:hover{background:rgba(255,255,255,.05);color:var(--content-primary);}
+.side-btn.active{color:var(--content-primary);background:rgba(39,89,205,.12);}
+.side-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;}
+/* MAIN */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;max-width:1200px;margin:0 auto;width:100%;}
+/* HERO */
+.hero{position:relative;margin:20px 24px 0;border-radius:16px;border:1px solid var(--border-divider);overflow:hidden;}
+.hero-cover{height:260px;background:radial-gradient(1000px 180px at 78% -10%,rgba(39,89,205,.45),transparent 65%),radial-gradient(600px 200px at 5% 130%,rgba(124,58,237,.28),transparent 60%),repeating-linear-gradient(135deg,rgba(255,255,255,.018) 0 2px,transparent 2px 14px),linear-gradient(180deg,#16243f 0%,#0b1326 100%);position:relative;border-radius:16px 16px 0 0;}
+.hero-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(18,18,18,.55) 100%);border-radius:16px 16px 0 0;}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--content-secondary);padding:16px 24px 0;}
+.breadcrumb .sep{opacity:.4;}
+.breadcrumb a:hover{color:var(--content-primary);}
+.hero-body{display:grid;grid-template-columns:1fr auto;gap:32px;padding:0 36px 32px;max-width:1200px;width:100%;}
+.avatar-wrap{display:flex;gap:20px;align-items:flex-end;margin-top:-52px;}
+.prof-avatar{width:108px;height:108px;border-radius:var(--r-full);background:linear-gradient(135deg,#1e3a5f,#0f2040);display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;color:white;border:3px solid var(--bg);position:relative;flex-shrink:0;box-shadow:0 12px 40px rgba(0,0,0,.55);}
+.prof-online{position:absolute;bottom:6px;right:6px;width:13px;height:13px;border-radius:50%;background:var(--green);border:2.5px solid var(--bg-surface);}
+.verified-badge{position:absolute;right:1px;top:1px;width:26px;height:26px;border-radius:50%;background:var(--btn-primary);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;}
+.name-block{padding-bottom:4px;min-width:0;flex:1;}
+.name-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+.name-row h1{font-size:27px;font-weight:700;letter-spacing:-.5px;}
+.pro-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;background:linear-gradient(180deg,#ffd262,#e0a008);color:#2b1c00;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;}
+.prof-agency{font-size:13px;font-weight:500;color:var(--content-secondary);margin-bottom:14px;}
+.prof-stats{display:flex;gap:22px;}
+.prof-stat{display:flex;flex-direction:column;gap:2px;}
+.prof-stat-val{font-size:17px;font-weight:700;color:var(--content-primary);}
+.prof-stat-lbl{font-size:9px;font-weight:600;color:var(--content-secondary);text-transform:uppercase;letter-spacing:.5px;}
+.hero-actions{display:flex;flex-direction:column;gap:10px;align-items:flex-end;justify-content:flex-end;padding-bottom:8px;}
+.response-hint{font-size:12px;color:var(--content-secondary);display:flex;align-items:center;gap:6px;}
+.response-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,.18);}
+.action-row{display:flex;gap:8px;}
+.btn-cta{background:var(--btn-primary);border-radius:var(--r-full);height:42px;padding:0 20px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:white;cursor:pointer;border:none;font-family:inherit;transition:opacity .15s;box-shadow:0 2px 14px rgba(39,89,205,.35);}
+.btn-cta:hover{opacity:.9;}
+.btn-sec{background:var(--bg-interaction);border-radius:var(--r-full);height:42px;padding:0 16px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--content-primary);cursor:pointer;border:1px solid var(--border-interact);font-family:inherit;transition:opacity .15s;}
+.btn-sec:hover{opacity:.75;}
+.btn-icon-sm{width:42px;height:42px;border-radius:var(--r-full);background:var(--bg-interaction);border:1px solid var(--border-divider);display:flex;align-items:center;justify-content:center;color:var(--content-secondary);cursor:pointer;transition:opacity .15s;}
+.btn-icon-sm:hover{opacity:.75;}
+/* KPI STRIP */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border-divider);margin:16px 24px 0;border-radius:12px;border:1px solid var(--border-divider);overflow:hidden;}
+.kpi-item{padding:18px 24px;border-right:1px solid var(--border-divider);display:flex;gap:14px;align-items:center;background:var(--bg-card);}
+.kpi-item:last-child{border-right:none;}
+.kpi-icon{width:36px;height:36px;border-radius:var(--r-md);background:rgba(39,89,205,.12);border:1px solid rgba(39,89,205,.2);display:flex;align-items:center;justify-content:center;color:var(--content-selected);flex-shrink:0;}
+.kpi-val{font-size:22px;font-weight:700;color:var(--content-primary);letter-spacing:-.4px;}
+.kpi-lbl{font-size:12px;font-weight:600;color:var(--content-primary);margin-bottom:1px;}
+.kpi-sub{font-size:11px;color:var(--content-secondary);}
+.kpi-delta{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--green);margin-top:2px;}
+/* TABS */
+.tabs-bar{display:flex;align-items:center;border-bottom:1px solid var(--border-divider);background:var(--bg);position:sticky;top:var(--header-h);z-index:100;padding:0 48px;margin-top:20px;}
+.tab-item{padding:0 2px;height:48px;display:flex;align-items:center;font-size:13px;font-weight:600;color:var(--content-secondary);cursor:pointer;border-bottom:2px solid transparent;margin-right:22px;transition:color .12s;white-space:nowrap;user-select:none;}
+.tab-item:hover{color:var(--content-primary);}
+.tab-item.active{color:var(--content-primary);border-bottom-color:var(--content-primary);}
+.tab-badge{margin-left:5px;background:var(--bg-interaction);border-radius:var(--r-full);padding:1px 7px;font-size:11px;font-weight:700;color:var(--content-secondary);}
+.tabs-meta{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.tab-loc{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--content-secondary);}
+.tab-social{width:30px;height:30px;border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;border:1px solid var(--border-interact);background:transparent;color:var(--content-secondary);cursor:pointer;transition:background .12s;}
+.tab-social:hover{background:rgba(255,255,255,.05);color:var(--content-primary);}
+/* TAB PANELS */
+.tab-panel{display:none;padding:28px 48px 80px;max-width:1200px;width:100%;}
+.tab-panel.active{display:block;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.section-title{font-size:15px;font-weight:700;color:var(--content-primary);}
+/* CARD */
+.card{background:var(--bg-card);border:1px solid var(--border-divider);border-radius:var(--r-xl);padding:20px 22px;}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.card-icon{width:32px;height:32px;border-radius:var(--r-md);background:rgba(39,89,205,.12);border:1px solid rgba(39,89,205,.2);display:flex;align-items:center;justify-content:center;color:var(--content-selected);flex-shrink:0;}
+.card-title{font-size:13px;font-weight:700;color:var(--content-primary);}
+.card-sub{font-size:11px;color:var(--content-secondary);margin-top:1px;}
+/* SOBRE */
+.sobre-top{display:grid;grid-template-columns:1fr 320px;gap:24px;margin-bottom:24px;}
+.sobre-bio{font-size:14px;font-weight:500;color:var(--content-secondary);line-height:1.7;margin-bottom:14px;}
+.sobre-bio strong{color:var(--content-primary);font-weight:700;}
+.pill-group{display:flex;gap:6px;flex-wrap:wrap;}
+.pill{padding:4px 12px;border-radius:var(--r-full);font-size:12px;font-weight:700;background:var(--bg-interaction);color:var(--content-secondary);border:1px solid var(--border-divider);}
+.verif-row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border-divider);}
+.verif-row:last-child{border-bottom:none;padding-bottom:0;}
+.verif-check{width:18px;height:18px;border-radius:5px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.verif-name{font-size:12px;font-weight:700;color:var(--content-primary);}
+.verif-desc{font-size:11px;color:var(--content-secondary);margin-top:2px;}
+.cert-chip{display:inline-flex;padding:2px 7px;border-radius:var(--r-full);font-size:10px;font-weight:700;margin-top:3px;background:rgba(39,89,205,.15);color:var(--content-selected);border:1px solid rgba(39,89,205,.3);}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.lang-list{display:flex;flex-direction:column;gap:10px;}
+.lang-row{display:flex;align-items:center;justify-content:space-between;font-size:12px;}
+.lang-name{color:var(--content-primary);font-weight:600;}
+.lang-right{display:flex;align-items:center;gap:8px;}
+.lang-bar{width:52px;height:4px;background:var(--border-divider);border-radius:2px;overflow:hidden;}
+.lang-bar-fill{height:100%;background:var(--btn-primary);border-radius:2px;}
+.lang-level{font-size:11px;color:var(--content-secondary);}
+.cert-list{display:flex;flex-direction:column;gap:7px;}
+.cert-row{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--content-primary);padding:7px 10px;border-radius:var(--r-md);background:rgba(255,255,255,.04);}
+.cert-row svg{fill:none;stroke:var(--green);flex-shrink:0;}
+/* ANÁLISIS */
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.zona-card{background:linear-gradient(140deg,#1a3a8f 0%,#2759cd 100%) !important;border:1px solid rgba(39,89,205,.35) !important;}
+.zona-big{font-size:52px;font-weight:900;letter-spacing:-2.5px;color:white;line-height:1;margin-bottom:5px;}
+.zona-sub{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:20px;}
+.zona-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.zona-bar-row:last-child{margin-bottom:0;}
+.zona-bar-lbl{font-size:12px;font-weight:600;color:rgba(255,255,255,.85);width:88px;flex-shrink:0;}
+.zona-bar-track{flex:1;height:5px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden;}
+.zona-bar-fill{height:100%;border-radius:3px;background:rgba(255,255,255,.45);}
+.zona-bar-fill.top{background:white;}
+.zona-bar-val{font-size:12px;font-weight:700;color:rgba(255,255,255,.9);width:32px;text-align:right;flex-shrink:0;}
+.rango-section{margin-bottom:20px;}.rango-section:last-child{margin-bottom:0;}
+.rango-label{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--content-primary);margin-bottom:14px;}
+.rango-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.rango-thumb-row{position:relative;height:28px;}
+.rango-thumb{position:absolute;top:0;transform:translateX(-50%);background:var(--bg-surface);border:1px solid var(--border-interact);border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;color:var(--content-primary);white-space:nowrap;line-height:1.4;}
+.rango-tick{position:absolute;top:22px;width:1px;height:8px;background:var(--border-interact);transform:translateX(-50%);}
+.rango-track{height:4px;border-radius:2px;margin-bottom:6px;}
+.rango-ends{display:flex;justify-content:space-between;margin-top:2px;}
+.rango-end{font-size:10px;font-weight:600;color:var(--content-placeholder);}
+.disp-status{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:700;color:var(--green);margin-bottom:16px;}
+.disp-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.disp-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-divider);}
+.disp-row:last-child{border-bottom:none;padding-bottom:0;}
+.disp-key{font-size:12px;font-weight:500;color:var(--content-secondary);}
+.disp-val{font-size:12px;font-weight:700;color:var(--content-primary);text-align:right;}
+.disp-val.green{color:var(--green);}
+.cupos{display:flex;align-items:center;gap:5px;}
+.cupo-dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
+.cupo-dot.off{background:var(--border-interact);}
+.dist-bar{height:48px;border-radius:var(--r-lg);overflow:hidden;display:flex;margin-bottom:20px;}
+.dist-seg{display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;}
+.dist-seg.venta{background:var(--btn-primary);color:rgba(255,255,255,.95);}
+.dist-seg.renta{background:rgba(39,89,205,.25);color:var(--content-selected);}
+.dist-legend{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.dist-item{display:flex;gap:10px;}
+.dist-swatch{width:14px;height:14px;border-radius:4px;flex-shrink:0;margin-top:6px;}
+.dist-num{font-size:22px;font-weight:700;color:var(--content-primary);letter-spacing:-.3px;}
+.dist-caption{font-size:12px;color:var(--content-secondary);margin-top:2px;}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.bar-row:last-child{margin-bottom:0;}
+.bar-track{flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;background:var(--btn-primary);}
+.bar-fill.g{background:var(--green);}
+.bar-val{font-size:12px;font-weight:700;color:var(--content-primary);width:36px;text-align:right;flex-shrink:0;}
+.metric-rows{display:flex;flex-direction:column;gap:13px;}
+.metric-row-top{display:flex;justify-content:space-between;margin-bottom:5px;}
+.metric-row-lbl{font-size:12px;font-weight:600;color:var(--content-primary);}
+.metric-row-val{font-size:12px;font-weight:700;}
+.chart-months{display:flex;justify-content:space-between;padding:0 2px;margin-top:6px;}
+.chart-month{font-size:9px;font-weight:600;color:var(--content-placeholder);}
+/* PROPIEDADES */
+.props-layout{display:grid;grid-template-columns:1fr 400px;gap:20px;}
+.props-col{min-width:0;}
+.sub-tabs{display:flex;gap:4px;margin-bottom:20px;}
+.sub-tab{padding:7px 16px;border-radius:var(--r-full);font-size:13px;font-weight:600;color:var(--content-secondary);background:transparent;border:1px solid transparent;cursor:pointer;font-family:inherit;transition:all .12s;}
+.sub-tab:hover{color:var(--content-primary);background:rgba(255,255,255,.05);}
+.sub-tab.active{color:var(--content-primary);background:var(--bg-interaction);border-color:var(--border-interact);}
+.sub-tab-count{font-size:11px;font-weight:500;color:var(--content-placeholder);margin-left:3px;}
+.prop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.prop-card{background:var(--bg-card);border:1px solid var(--border-divider);border-radius:var(--r-xl);overflow:hidden;cursor:pointer;transition:border-color .15s,transform .15s;}
+.prop-card:hover{border-color:var(--border-interact);transform:translateY(-2px);}
+.prop-thumb{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;position:relative;}
+.prop-thumb.v{background:linear-gradient(135deg,#0f1f40 0%,#1a2f5a 50%,#0d1e3e 100%);}
+.prop-thumb.r{background:linear-gradient(135deg,#1a0b35 0%,#2d1460 50%,#140929 100%);}
+.prop-thumb.s{background:#1a1a1a;filter:grayscale(.5);}
+.prop-thumb svg{opacity:.12;}
+.prop-badge{position:absolute;top:10px;left:10px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:var(--r-full);}
+.prop-badge.v{background:rgba(39,89,205,.85);color:#c0d4ff;border:1px solid rgba(39,89,205,.5);}
+.prop-badge.r{background:rgba(124,58,237,.85);color:#ddd6fe;border:1px solid rgba(124,58,237,.5);}
+.prop-badge.s{background:rgba(60,60,60,.85);color:#ccc;border:1px solid rgba(80,80,80,.5);}
+.prop-body{padding:12px 14px 14px;}
+.prop-price{font-size:16px;font-weight:700;color:var(--content-primary);margin-bottom:3px;}
+.prop-zone{font-size:12px;font-weight:600;color:var(--content-secondary);margin-bottom:7px;}
+.prop-specs{display:flex;gap:8px;font-size:11px;font-weight:500;color:var(--content-secondary);}
+#map{width:100%;border-radius:var(--r-xl);overflow:hidden;height:520px;background:#0c1220;position:sticky;top:calc(var(--header-h) + 48px + 20px);}
+/* RESEÑAS */
+.rev-summary{display:grid;grid-template-columns:auto 1fr;gap:32px;padding:24px;border-radius:var(--r-xl);border:1px solid var(--border-divider);background:var(--bg-card);margin-bottom:20px;}
+.rev-left{display:flex;flex-direction:column;gap:6px;padding-right:32px;border-right:1px solid var(--border-divider);min-width:180px;}
+.rev-big{font-size:56px;font-weight:700;line-height:1;letter-spacing:-.02em;color:var(--content-primary);}
+.stars{display:inline-flex;gap:2px;color:var(--btn-primary);}
+.rev-count{font-size:13px;color:var(--content-secondary);margin-top:4px;}
+.rev-breakdown{display:flex;flex-direction:column;gap:8px;justify-content:center;}
+.rev-row{display:grid;grid-template-columns:84px 1fr 40px;align-items:center;gap:10px;font-size:12px;color:var(--content-secondary);}
+.rev-bar{height:5px;background:var(--border-divider);border-radius:3px;overflow:hidden;}
+.rev-bar-fill{height:100%;background:var(--btn-primary);border-radius:3px;}
+.rev-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.review-card{padding:20px;border-radius:var(--r-xl);border:1px solid var(--border-divider);background:var(--bg-card);display:flex;flex-direction:column;gap:12px;}
+.review-top{display:flex;align-items:center;gap:12px;}
+.review-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:white;flex-shrink:0;}
+.review-name{font-weight:600;font-size:14px;}
+.review-when{font-size:11px;color:var(--content-secondary);}
+.review-stars{margin-left:auto;}
+.review-body{font-size:13px;line-height:1.6;color:var(--content-primary);}
+.review-foot{display:flex;gap:6px;flex-wrap:wrap;}
+.review-tag{padding:3px 8px;border-radius:var(--r-sm);background:var(--bg-interaction);color:var(--content-secondary);font-size:11px;}
+/* SERVICIOS */
+.servicios-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.servicio-card{background:var(--bg-card);border:1px solid var(--border-divider);border-radius:var(--r-xl);padding:20px 22px;cursor:pointer;transition:border-color .15s;}
+.servicio-card:hover{border-color:var(--border-interact);}
+.servicio-icon{width:36px;height:36px;border-radius:var(--r-md);background:rgba(39,89,205,.12);border:1px solid rgba(39,89,205,.2);display:flex;align-items:center;justify-content:center;color:var(--content-selected);margin-bottom:12px;}
+.servicio-name{font-size:14px;font-weight:700;color:var(--content-primary);margin-bottom:4px;}
+.servicio-desc{font-size:12px;font-weight:500;color:var(--content-secondary);line-height:1.55;}
+.servicio-price{font-size:13px;font-weight:700;color:var(--content-selected);margin-top:12px;}
+/* LEAFLET */
+.leaflet-container{font-family:'Red Hat Display',sans-serif !important;}
+.leaflet-control-zoom{border:1px solid rgba(255,255,255,.1) !important;border-radius:8px !important;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.5) !important;}
+.leaflet-control-zoom a{background:rgba(18,18,18,.95) !important;color:#a6a6a6 !important;border-bottom:1px solid rgba(255,255,255,.08) !important;font-size:16px !important;line-height:28px !important;width:30px !important;height:30px !important;}
+.leaflet-control-zoom a:hover{background:rgba(39,89,205,.25) !important;color:#f7f7f7 !important;}
+.leaflet-control-attribution{background:rgba(18,18,18,.75) !important;color:#555 !important;font-size:10px !important;}
+.leaflet-popup-content-wrapper{background:#1a1a1a !important;border:1px solid #2d2d2d !important;border-radius:12px !important;padding:0 !important;box-shadow:0 12px 40px rgba(0,0,0,.7) !important;overflow:hidden;}
+.leaflet-popup-tip-container{display:none !important;}
+.leaflet-popup-content{margin:0 !important;}
+.leaflet-popup-close-button{color:#a6a6a6 !important;top:8px !important;right:8px !important;z-index:10;}
+.popup-card{width:200px;padding:12px;}
+.popup-type{display:inline-flex;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:700;margin-bottom:5px;}
+.popup-type.venta{color:#cdddff;border:1px solid rgba(39,89,205,.3);background:rgba(39,89,205,.12);}
+.popup-type.renta{color:#ddd6fe;border:1px solid rgba(124,58,237,.3);background:rgba(124,58,237,.12);}
+.popup-price{font-size:15px;font-weight:700;color:#f7f7f7;margin-bottom:2px;}
+.popup-zone{font-size:12px;color:#a6a6a6;margin-bottom:2px;}
+.popup-meta{font-size:11px;color:#666;margin-bottom:10px;}
+.popup-btn{width:100%;height:32px;border-radius:999px;background:#2759cd;border:none;cursor:pointer;font-family:'Red Hat Display',sans-serif;font-size:12px;font-weight:700;color:white;display:flex;align-items:center;justify-content:center;}
+.custom-marker{display:flex;align-items:center;justify-content:center;}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════ */
+@media (max-width: 1100px) {
+  .searchbox { width: 360px; }
+  .search-filters { display: none; }
+  .sobre-top { grid-template-columns: 1fr; }
+  .three-col { grid-template-columns: 1fr 1fr; }
+  .props-layout { grid-template-columns: 1fr; }
+  .props-layout > div:last-child { height: 320px; }
+  .rev-summary { grid-template-columns: 1fr; gap: 16px; }
+  .rev-grid { grid-template-columns: 1fr; }
+  .servicios-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  :root { --header-h: 56px; --sidebar-w: 0px; }
+  .header { padding: 0 14px; }
+  .searchbox { display: none; }
+  .logo { width: auto; }
+  .header-right { width: auto; gap: 8px; }
+  .icon-btn { width: 36px; height: 36px; }
+  .avatar-sm { width: 32px; height: 32px; font-size: 11px; }
+
+  /* Hide sidebar on mobile */
+  .sidebar { display: none; }
+  .app-layout { display: block; }
+  .main { max-width: 100%; margin: 0; }
+
+  /* Hero */
+  .hero { margin: 12px 12px 0; }
+  .hero-cover { height: 160px; }
+  .hero-body { grid-template-columns: 1fr; gap: 0; padding: 0 16px 24px; }
+  .avatar-wrap { margin-top: -36px; gap: 14px; flex-wrap: wrap; }
+  .prof-avatar { width: 72px; height: 72px; font-size: 22px; }
+  .name-row h1 { font-size: 20px; }
+  .hero-actions { align-items: flex-start; padding-bottom: 0; }
+  .action-row { flex-wrap: wrap; }
+
+  /* KPI strip */
+  .kpi-strip { margin: 12px 12px 0; grid-template-columns: repeat(2, 1fr); }
+  .kpi-item:nth-child(2) { border-right: none; }
+  .kpi-item:nth-child(3) { border-top: 1px solid var(--border-divider); }
+  .kpi-item:nth-child(4) { border-top: 1px solid var(--border-divider); border-right: none; }
+
+  /* Tabs */
+  .tabs-bar { padding: 0 12px; overflow-x: auto; }
+  .tab-panel { padding: 16px 12px 64px; }
+
+  .sobre-top { grid-template-columns: 1fr; }
+  .three-col { grid-template-columns: 1fr; }
+  .analysis-grid { grid-template-columns: 1fr; }
+  .dist-legend { grid-template-columns: 1fr; }
+  .props-layout { grid-template-columns: 1fr; }
+  .props-layout > div:last-child { height: 280px; }
+  .prop-grid { grid-template-columns: 1fr; }
+  .rev-summary { grid-template-columns: 1fr; gap: 12px; }
+  .rev-row { grid-template-columns: 60px 1fr 36px; }
+  .rev-grid { grid-template-columns: 1fr; }
+  .servicios-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 420px) {
+  .hero-cover { height: 130px; }
+  .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+  .action-row { gap: 6px; }
+  .btn-cta { font-size: 12px; padding: 0 14px; height: 38px; }
+  .btn-sec { font-size: 12px; padding: 0 12px; height: 38px; }
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <a class="logo" href="index.html">
+    <span class="logo-text">Monopolio</span>
+  </a>
+  <div class="searchbox">
+    <div class="search-input">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#898989">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <span>Colonia, dirección o lugar</span>
+    </div>
+    <div class="search-filters">
+      <div class="chip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Rentar
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="chip">
+        Precio
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <button class="btn-buscar">Buscar</button>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-divider"></div>
+    <button class="icon-btn">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a6a6a6" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+    </button>
+    <div class="avatar-sm">LG</div>
+  </div>
+</header>
+<div class="app-layout">
+  <aside class="sidebar">
+    <button class="side-btn"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Inicio</button>
+    <button class="side-btn active"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Búsqueda</button>
+    <button class="side-btn"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>Guardados</button>
+    <button class="side-btn"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alertas</button>
+    <button class="side-btn"><svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Mensajes</button>
+  </aside>
+  <div class="main">
+    <div class="breadcrumb"><a href="index.html">Inicio</a><span class="sep">/</span><a href="#">Asesores</a><span class="sep">/</span><span style="color:var(--content-primary)">Laura Gómez</span></div>
+    <section class="hero">
+      <div class="hero-cover"></div>
+      <div class="hero-body">
+        <div class="avatar-wrap">
+          <div class="prof-avatar">LG<div class="prof-online"></div><div class="verified-badge"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div></div>
+          <div class="name-block">
+            <div class="name-row"><h1>Laura Gómez</h1><span class="pro-chip">★ TOP BROKER</span></div>
+            <p class="prof-agency">Grupo Méndez Inmobiliaria · Asesor Inmobiliario</p>
+            <div class="prof-stats">
+              <div class="prof-stat"><span class="prof-stat-val">4.9 ★</span><span class="prof-stat-lbl">127 reseñas</span></div>
+              <div class="prof-stat"><span class="prof-stat-val">186</span><span class="prof-stat-lbl">Ops. cerradas</span></div>
+              <div class="prof-stat"><span class="prof-stat-val">47</span><span class="prof-stat-lbl">Props. activas</span></div>
+              <div class="prof-stat"><span class="prof-stat-val">&lt; 2 h</span><span class="prof-stat-lbl">Respuesta</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-actions">
+          <span class="response-hint"><span class="response-dot"></span>Disponible ahora</span>
+          <div class="action-row">
+            <button class="btn-icon-sm" title="Compartir"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
+            <button class="btn-sec"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.93 5.07"/></svg>Llamar</button>
+            <button class="btn-cta"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Enviar mensaje</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="kpi-strip">
+      <div class="kpi-item"><div class="kpi-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div><div class="kpi-val">98%</div><div class="kpi-lbl">Tasa de respuesta</div><div class="kpi-sub">Responde en &lt; 2 horas</div></div></div>
+      <div class="kpi-item"><div class="kpi-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div><div><div class="kpi-val">186</div><div class="kpi-lbl">Operaciones cerradas</div><div class="kpi-delta"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>+23 vs año anterior</div></div></div>
+      <div class="kpi-item"><div class="kpi-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div><div class="kpi-val">18 días</div><div class="kpi-lbl">Tiempo promedio cierre</div><div class="kpi-delta"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>−4 días vs mercado</div></div></div>
+      <div class="kpi-item"><div class="kpi-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><div class="kpi-val">94%</div><div class="kpi-lbl">Tasa de éxito</div><div class="kpi-sub">Ops. iniciadas → cerradas</div></div></div>
+    </div>
+    <div class="tabs-bar">
+      <div class="tab-item active" data-tab="sobre">Sobre mí</div>
+      <div class="tab-item" data-tab="analisis">Análisis</div>
+      <div class="tab-item" data-tab="propiedades">Propiedades <span class="tab-badge">47</span></div>
+      <div class="tabs-meta">
+        <span class="tab-loc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>CDMX, México</span>
+        <button class="tab-social"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></button>
+        <button class="tab-social"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></button>
+      </div>
+    </div>
+    <!-- SOBRE -->
+    <div id="tab-sobre" class="tab-panel active">
+      <div class="sobre-top">
+        <div>
+          <div class="section-header" style="margin-bottom:12px"><span class="section-title">Sobre Laura Gómez</span></div>
+          <p class="sobre-bio">Asesora inmobiliaria con <strong>8 años de experiencia</strong> en el mercado de CDMX. Especialista en propiedades premium en <strong>Polanco, Condesa y Roma Norte</strong>, con manejo de carteras desde <strong>$1.5M hasta $25M MXN</strong>, tanto venta como renta de largo plazo.</p>
+          <p class="sobre-bio">Miembro activo de <strong>AMPI</strong> con certificación vigente. Trabajo con clientes que buscan claridad y velocidad: información real del mercado para tomar la mejor decisión.</p>
+          <div class="pill-group"><span class="pill">Departamentos</span><span class="pill">Casas</span><span class="pill">Luxury</span><span class="pill">Inversión</span><span class="pill">CDMX</span><span class="pill">Edomex</span></div>
+        </div>
+        <div>
+          <div class="card">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--content-placeholder);margin-bottom:12px;">Verificaciones</div>
+            <div class="verif-row"><div class="verif-check"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3.5" style="width:10px;height:10px"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="verif-name">Identidad verificada</div><div class="verif-desc">INE · Cédula profesional</div></div></div>
+            <div class="verif-row"><div class="verif-check"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3.5" style="width:10px;height:10px"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="verif-name">Agencia registrada</div><div class="verif-desc">Grupo Méndez Inmobiliaria · 8 años</div></div></div>
+            <div class="verif-row"><div class="verif-check"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3.5" style="width:10px;height:10px"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="verif-name">Certificación</div><span class="cert-chip">AMPI · #24891</span></div></div>
+            <div class="verif-row"><div class="verif-check"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3.5" style="width:10px;height:10px"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="verif-name">Historial Monopolio</div><div class="verif-desc">Activo desde 2017 · 8 años</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="three-col">
+        <div class="card"><div class="card-header"><div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 8 6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></svg></div><div><div class="card-title">Idiomas</div></div></div><div class="lang-list"><div class="lang-row"><span class="lang-name">Español</span><div class="lang-right"><div class="lang-bar"><div class="lang-bar-fill" style="width:100%"></div></div><span class="lang-level">Nativo</span></div></div><div class="lang-row"><span class="lang-name">Inglés</span><div class="lang-right"><div class="lang-bar"><div class="lang-bar-fill" style="width:85%"></div></div><span class="lang-level">Avanzado</span></div></div><div class="lang-row"><span class="lang-name">Portugués</span><div class="lang-right"><div class="lang-bar"><div class="lang-bar-fill" style="width:40%"></div></div><span class="lang-level">Básico</span></div></div></div></div>
+        <div class="card"><div class="card-header"><div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15c-2.5 0-5-1-5-3.5V4l5 2 5-2v7.5c0 2.5-2.5 3.5-5 3.5z"/><path d="M8.2 10 9 20l3-2 3 2 .8-10"/></svg></div><div><div class="card-title">Certificaciones</div></div></div><div class="cert-list"><div class="cert-row"><svg width="13" height="13" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>AMPI Certificada</div><div class="cert-row"><svg width="13" height="13" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Cédula Profesional</div><div class="cert-row"><svg width="13" height="13" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Valuación 2024</div><div class="cert-row"><svg width="13" height="13" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>NAR Certified Broker</div></div></div>
+        <div class="card"><div class="card-header"><div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="card-title">Zonas de operación</div></div></div><div class="pill-group" style="margin-top:4px"><span class="pill">Polanco</span><span class="pill">Condesa</span><span class="pill">Roma Norte</span><span class="pill">Coyoacán</span><span class="pill">Narvarte</span><span class="pill">Del Valle</span><span class="pill">Tlalpan</span><span class="pill">Pedregal</span></div></div>
+      </div>
+      <!-- SERVICIOS fusionados -->
+      <div class="section-header" style="margin-top:36px"><span class="section-title">Servicios ofrecidos</span></div>
+      <div class="servicios-grid">
+        <div class="servicio-card"><div class="servicio-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="servicio-name">Venta de propiedad</div><div class="servicio-desc">Valuación, estrategia de precio, difusión y cierre completo. Desde listado hasta firma de escrituras.</div><div class="servicio-price">Comisión estándar · 3–5%</div></div>
+        <div class="servicio-card"><div class="servicio-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10H3M21 6H3M21 14H3M21 18H3"/></svg></div><div class="servicio-name">Renta larga estancia</div><div class="servicio-desc">Búsqueda de inquilino, verificación de referencias, contrato y administración mensual opcional.</div><div class="servicio-price">1 mes de renta · gestión</div></div>
+        <div class="servicio-card"><div class="servicio-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="servicio-name">Asesoría de inversión</div><div class="servicio-desc">Análisis de zonas, rentabilidad proyectada, comparativas de mercado y recomendación de activo.</div><div class="servicio-price">Consulta · desde $2,500 MXN</div></div>
+        <div class="servicio-card"><div class="servicio-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div><div class="servicio-name">Acompañamiento en compra</div><div class="servicio-desc">Filtro de opciones, visitas coordinadas, negociación de precio y revisión de documentación legal.</div><div class="servicio-price">Sin costo para el comprador</div></div>
+        <div class="servicio-card"><div class="servicio-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="servicio-name">Valuación de propiedad</div><div class="servicio-desc">Análisis comparativo de mercado con precio sugerido y potencial de revalorización por zona.</div><div class="servicio-price">Desde $1,800 MXN</div></div>
+        <div class="servicio-card"><div class="servicio-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="servicio-name">Revisión legal de contratos</div><div class="servicio-desc">Escrituras, promesas de compraventa y contratos de arrendamiento con asesor jurídico aliado.</div><div class="servicio-price">Incluido en operación</div></div>
+      </div>
+    </div>
+    <!-- ANÁLISIS -->
+    <div id="tab-analisis" class="tab-panel">
+      <div class="analysis-grid">
+        <div class="card zona-card"><div class="zona-big">CDMX</div><div class="zona-sub">Ciudad de México · 72% de operaciones</div><div class="zona-bar-row"><span class="zona-bar-lbl">Coyoacán</span><div class="zona-bar-track"><div class="zona-bar-fill top" style="width:42%"></div></div><span class="zona-bar-val">42%</span></div><div class="zona-bar-row"><span class="zona-bar-lbl">Polanco</span><div class="zona-bar-track"><div class="zona-bar-fill" style="width:28%"></div></div><span class="zona-bar-val">28%</span></div><div class="zona-bar-row"><span class="zona-bar-lbl">Condesa</span><div class="zona-bar-track"><div class="zona-bar-fill" style="width:15%"></div></div><span class="zona-bar-val">15%</span></div><div class="zona-bar-row"><span class="zona-bar-lbl">Roma Norte</span><div class="zona-bar-track"><div class="zona-bar-fill" style="width:8%"></div></div><span class="zona-bar-val">8%</span></div></div>
+        <div class="card"><div class="card-header"><div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="card-title">Rango de precios habitual</div><div class="card-sub">Precio típico por modalidad</div></div></div><div class="rango-section"><div class="rango-label"><div class="rango-dot" style="background:#2759cd"></div>Venta</div><div class="rango-thumb-row"><div class="rango-thumb" style="left:30%">$4.5M</div><div class="rango-tick" style="left:30%"></div></div><div class="rango-track" style="background:linear-gradient(90deg,rgba(39,89,205,.12) 0%,#2759cd 30%,rgba(39,89,205,.12) 100%)"></div><div class="rango-ends"><span class="rango-end">$1.2M MXN</span><span class="rango-end">$18M MXN</span></div></div><div class="rango-section"><div class="rango-label"><div class="rango-dot" style="background:#7c3aed"></div>Renta</div><div class="rango-thumb-row"><div class="rango-thumb" style="left:35%">$22k/mes</div><div class="rango-tick" style="left:35%"></div></div><div class="rango-track" style="background:linear-gradient(90deg,rgba(124,58,237,.12) 0%,#7c3aed 35%,rgba(124,58,237,.12) 100%)"></div><div class="rango-ends"><span class="rango-end">$12k/mes</span><span class="rango-end">$45k/mes</span></div></div></div>
+        <div class="card"><div class="disp-status"><div class="disp-dot"></div>Disponible ahora</div><div class="disp-row"><span class="disp-key">Horario</span><span class="disp-val">Lun–Sáb · 9:00–19:00</span></div><div class="disp-row"><span class="disp-key">Respuesta</span><span class="disp-val green">&lt; 2 horas</span></div><div class="disp-row"><span class="disp-key">Tasa de respuesta</span><span class="disp-val green">98%</span></div><div class="disp-row"><span class="disp-key">Visitas</span><span class="disp-val">Presencial · Video</span></div><div class="disp-row"><span class="disp-key">Idiomas</span><span class="disp-val">Español · Inglés</span></div><div class="disp-row"><span class="disp-key">Cupos activos</span><div class="cupos"><div class="cupo-dot"></div><div class="cupo-dot"></div><div class="cupo-dot"></div><div class="cupo-dot off"></div><div class="cupo-dot off"></div><span class="disp-val" style="margin-left:4px">3 de 5</span></div></div></div>
+        <div class="card"><div class="card-header"><div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 3 6-8"/></svg></div><div><div class="card-title">Distribución de anuncios</div><div class="card-sub">Composición por modalidad</div></div></div><div class="dist-bar"><div class="dist-seg venta" style="flex:60">60%</div><div class="dist-seg renta" style="flex:40">40%</div></div><div class="dist-legend"><div class="dist-item"><div class="dist-swatch" style="background:var(--btn-primary)"></div><div><div class="dist-num">60%</div><div class="dist-caption">En venta</div></div></div><div class="dist-item"><div class="dist-swatch" style="background:rgba(39,89,205,.28)"></div><div><div class="dist-num">40%</div><div class="dist-caption">En renta</div></div></div></div></div>
+        <div class="card"><div class="card-header"><div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><div class="card-title">Métricas de contacto</div><div class="card-sub">Últimos 90 días</div></div></div><div class="metric-rows"><div><div class="metric-row-top"><span class="metric-row-lbl">Tasa de respuesta</span><span class="metric-row-val" style="color:var(--green)">98%</span></div><div class="bar-track"><div class="bar-fill g" style="width:98%"></div></div></div><div><div class="metric-row-top"><span class="metric-row-lbl">Contacto → visita</span><span class="metric-row-val">71%</span></div><div class="bar-track"><div class="bar-fill" style="width:71%"></div></div></div><div><div class="metric-row-top"><span class="metric-row-lbl">Visita → oferta</span><span class="metric-row-val">48%</span></div><div class="bar-track"><div class="bar-fill" style="width:48%"></div></div></div><div><div class="metric-row-top"><span class="metric-row-lbl">Oferta → cierre</span><span class="metric-row-val" style="color:var(--green)">94%</span></div><div class="bar-track"><div class="bar-fill g" style="width:94%"></div></div></div></div></div>
+        <div class="card"><div class="card-header"><div class="card-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div><div class="card-title">Cierres por mes</div><div class="card-sub">2025 · tendencia acumulada</div></div></div><svg viewBox="0 0 480 90" width="100%" style="display:block;overflow:visible;margin-top:4px"><line x1="20" y1="8" x2="460" y2="8" stroke="rgba(255,255,255,.05)" stroke-width="1"/><line x1="20" y1="38" x2="460" y2="38" stroke="rgba(255,255,255,.05)" stroke-width="1"/><line x1="20" y1="68" x2="460" y2="68" stroke="rgba(255,255,255,.05)" stroke-width="1"/><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2759cd" stop-opacity="0.22"/><stop offset="100%" stop-color="#2759cd" stop-opacity="0"/></linearGradient></defs><path d="M20,68 L60,55 L100,40 L140,62 L180,34 L220,48 L260,20 L300,40 L340,27 L380,8 L420,34 L460,14 L460,75 L20,75 Z" fill="url(#lg)"/><polyline points="20,68 60,55 100,40 140,62 180,34 220,48 260,20 300,40 340,27 380,8 420,34 460,14" fill="none" stroke="#2759cd" stroke-width="1.5" stroke-linejoin="round"/><circle cx="380" cy="8" r="3.5" fill="#2759cd"/></svg><div class="chart-months"><span class="chart-month">Ene</span><span class="chart-month">Feb</span><span class="chart-month">Mar</span><span class="chart-month">Abr</span><span class="chart-month">May</span><span class="chart-month">Jun</span><span class="chart-month">Jul</span><span class="chart-month">Ago</span><span class="chart-month">Sep</span><span class="chart-month">Oct</span><span class="chart-month">Nov</span><span class="chart-month">Dic</span></div></div>
+      </div>
+    </div>
+    <!-- PROPIEDADES -->
+    <div id="tab-propiedades" class="tab-panel">
+      <div class="props-layout">
+        <div class="props-col">
+          <div class="sub-tabs">
+            <button class="sub-tab active" data-sub="venta">En venta <span class="sub-tab-count">28</span></button>
+            <button class="sub-tab" data-sub="renta">En renta <span class="sub-tab-count">19</span></button>
+            <button class="sub-tab" data-sub="vendida">Vendidas <span class="sub-tab-count">186</span></button>
+          </div>
+          <div class="prop-grid" id="propGrid"></div>
+        </div>
+        <div><div id="map"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// Portada random del stack
+(function(){
+  var covers=[
+    'radial-gradient(1000px 180px at 78% -10%,rgba(39,89,205,.5),transparent 65%),radial-gradient(600px 200px at 5% 130%,rgba(124,58,237,.32),transparent 60%),repeating-linear-gradient(135deg,rgba(255,255,255,.022) 0 2px,transparent 2px 14px),linear-gradient(180deg,#16243f 0%,#0b1326 100%)',
+    'radial-gradient(800px 200px at 20% -20%,rgba(194,97,36,.5),transparent 60%),radial-gradient(500px 150px at 90% 110%,rgba(120,50,10,.4),transparent 55%),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0 1px,transparent 1px 12px),repeating-linear-gradient(90deg,rgba(255,255,255,.01) 0 1px,transparent 1px 12px),linear-gradient(160deg,#1f1208 0%,#110b04 100%)',
+    'radial-gradient(900px 220px at 60% -15%,rgba(22,101,52,.55),transparent 65%),radial-gradient(400px 160px at 0% 120%,rgba(5,46,22,.6),transparent 55%),repeating-linear-gradient(125deg,rgba(255,255,255,.016) 0 1.5px,transparent 1.5px 16px),linear-gradient(170deg,#091a0f 0%,#050d07 100%)',
+    'radial-gradient(700px 180px at 50% -10%,rgba(100,116,139,.4),transparent 60%),radial-gradient(600px 200px at 100% 100%,rgba(51,65,85,.35),transparent 55%),repeating-linear-gradient(110deg,rgba(255,255,255,.018) 0 1px,transparent 1px 10px),linear-gradient(180deg,#111418 0%,#090b0e 100%)',
+    'radial-gradient(900px 250px at 30% -20%,rgba(124,58,237,.45),transparent 60%),radial-gradient(700px 180px at 90% 20%,rgba(6,182,212,.3),transparent 55%),radial-gradient(400px 140px at 10% 110%,rgba(79,70,229,.25),transparent 50%),repeating-linear-gradient(145deg,rgba(255,255,255,.012) 0 1.5px,transparent 1.5px 18px),linear-gradient(180deg,#0d0818 0%,#050610 100%)',
+    'radial-gradient(700px 200px at 80% -10%,rgba(159,18,57,.45),transparent 60%),radial-gradient(500px 160px at 0% 100%,rgba(120,10,30,.35),transparent 55%),repeating-linear-gradient(160deg,rgba(255,255,255,.014) 0 1px,transparent 1px 12px),linear-gradient(165deg,#190709 0%,#0d0405 100%)',
+    'radial-gradient(1100px 220px at 50% -30%,rgba(148,163,184,.18),transparent 65%),radial-gradient(500px 180px at 0% 120%,rgba(100,116,139,.12),transparent 55%),repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 20px),repeating-linear-gradient(0deg,rgba(255,255,255,.008) 0 1px,transparent 1px 20px),linear-gradient(180deg,#141618 0%,#0a0b0d 100%)',
+    'radial-gradient(800px 200px at 70% -10%,rgba(8,145,178,.4),transparent 60%),radial-gradient(500px 160px at 5% 110%,rgba(14,116,144,.3),transparent 55%),radial-gradient(300px 100px at 50% 60%,rgba(6,182,212,.12),transparent 50%),repeating-linear-gradient(135deg,rgba(255,255,255,.016) 0 1.5px,transparent 1.5px 14px),linear-gradient(180deg,#051920 0%,#020d13 100%)',
+    'radial-gradient(600px 180px at 20% 20%,rgba(255,255,255,.04),transparent 60%),radial-gradient(400px 120px at 80% 80%,rgba(255,255,255,.03),transparent 55%),repeating-linear-gradient(35deg,rgba(255,255,255,.022) 0 1px,transparent 1px 22px),repeating-linear-gradient(125deg,rgba(255,255,255,.012) 0 1px,transparent 1px 34px),linear-gradient(145deg,#1a1a1a 0%,#0f0f0f 100%)'
+  ];
+  var el=document.querySelector('.hero-cover');
+  if(el)el.style.background=covers[Math.floor(Math.random()*covers.length)];
+})();
+document.querySelectorAll('.tab-item').forEach(function(t){t.addEventListener('click',function(){var k=this.dataset.tab;document.querySelectorAll('.tab-item').forEach(function(x){x.classList.remove('active');});document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});this.classList.add('active');document.getElementById('tab-'+k).classList.add('active');if(k==='propiedades'&&!window._mr)initMap();});});
+var PROPS={venta:[{p:'$3,200,000',z:'Condesa',s:'3 rec. · 120 m²',t:'v',l:'Venta'},{p:'$5,800,000',z:'Coyoacán',s:'4 rec. · 280 m²',t:'v',l:'Venta'},{p:'$2,850,000',z:'Roma Norte',s:'2 rec. · 88 m²',t:'v',l:'Venta'},{p:'$4,100,000',z:'Tlalpan',s:'4 rec. · 320 m²',t:'v',l:'Venta'},{p:'$7,500,000',z:'Polanco',s:'3 rec. · 210 m²',t:'v',l:'Venta'},{p:'$3,950,000',z:'Narvarte',s:'3 rec. · 140 m²',t:'v',l:'Venta'}],renta:[{p:'$22,000/mes',z:'Polanco',s:'2 rec. · 95 m²',t:'r',l:'Renta'},{p:'$18,200/mes',z:'Narvarte',s:'2 rec. · 80 m²',t:'r',l:'Renta'},{p:'$35,000/mes',z:'Condesa',s:'3 rec. · 150 m²',t:'r',l:'Renta'},{p:'$28,500/mes',z:'Roma Norte',s:'2 rec. · 110 m²',t:'r',l:'Renta'}],vendida:[{p:'$4,200,000',z:'Polanco',s:'3 rec. · 130 m²',t:'s',l:'Vendida'},{p:'$6,100,000',z:'Coyoacán',s:'4 rec. · 240 m²',t:'s',l:'Vendida'},{p:'$3,500,000',z:'Condesa',s:'2 rec. · 100 m²',t:'s',l:'Vendida'},{p:'$8,900,000',z:'Pedregal',s:'5 rec. · 380 m²',t:'s',l:'Vendida'}]};
+function rp(k){var g=document.getElementById('propGrid'),d=PROPS[k]||[];g.innerHTML=d.map(function(x){return'<div class="prop-card"><div class="prop-thumb '+x.t+'"><span class="prop-badge '+x.t+'">'+x.l+'</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="prop-body"><div class="prop-price">'+x.p+'</div><div class="prop-zone">'+x.z+'</div><div class="prop-specs">'+x.s+'</div></div></div>';}).join('');}
+rp('venta');
+document.querySelectorAll('.sub-tab').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.sub-tab').forEach(function(x){x.classList.remove('active');});this.classList.add('active');rp(this.dataset.sub);});});
+var MD=[{lat:19.4116,lng:-99.1733,price:'$3.2M',zone:'Condesa',desc:'Depto 3 rec. · 120 m²',type:'venta',lbl:'Venta'},{lat:19.4318,lng:-99.1976,price:'$22K/mes',zone:'Polanco',desc:'Depto 2 rec. · 95 m²',type:'renta',lbl:'Renta'},{lat:19.3528,lng:-99.1619,price:'$5.8M',zone:'Coyoacán',desc:'Casa · 280 m²',type:'venta',lbl:'Venta'},{lat:19.4162,lng:-99.1522,price:'$2.85M',zone:'Roma Norte',desc:'Depto · 88 m²',type:'venta',lbl:'Venta'},{lat:19.3977,lng:-99.1645,price:'$18.2K/mes',zone:'Narvarte',desc:'Depto 2 rec. · 80 m²',type:'renta',lbl:'Renta'},{lat:19.2948,lng:-99.1536,price:'$4.1M',zone:'Tlalpan',desc:'Casa · 320 m²',type:'venta',lbl:'Venta'}];
+function initMap(){window._mr=true;var m=L.map('map',{center:[19.39,-99.17],zoom:11});L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap contributors © CARTO',subdomains:'abcd',maxZoom:19}).addTo(m);function ic(p){var bg=p.type==='renta'?'rgba(124,58,237,.92)':'rgba(39,89,205,.95)';return L.divIcon({html:'<div style="background:'+bg+';color:white;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;font-family:Red Hat Display,sans-serif;white-space:nowrap;box-shadow:0 3px 12px rgba(0,0,0,.6);border:1.5px solid rgba(255,255,255,.15)">'+p.price+'</div>',className:'custom-marker',iconAnchor:[0,0],popupAnchor:[0,-8]});}function pp(p){return'<div class="popup-card"><span class="popup-type '+p.type+'">'+p.lbl+'</span><div class="popup-price">'+p.price+'</div><div class="popup-zone">'+p.zone+'</div><div class="popup-meta">'+p.desc+'</div><button class="popup-btn">Contactar asesor</button></div>';}MD.forEach(function(p,i){var mk=L.marker([p.lat,p.lng],{icon:ic(p)}).addTo(m);mk.bindPopup(pp(p),{maxWidth:220,minWidth:200,closeButton:true});if(i===0)setTimeout(function(){mk.openPopup();},600);});}
+</script>
+</body>
+</html>

@@ -353,6 +353,62 @@ svg { display: block; }
 .sticky-stat { text-align: center; }
 .sticky-stat-val { font-size: 13px; font-weight: 700; color: var(--content-primary); }
 .sticky-stat-lbl { font-size: 9px; font-weight: 600; color: var(--content-placeholder); text-transform: uppercase; letter-spacing: .4px; }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════ */
+@media (max-width: 1100px) {
+  :root { --page-pad: 24px; }
+  .searchbox { width: 360px; }
+  .search-filters { display: none; }
+  .row-2col-eq { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  :root { --header-h: 56px; --page-pad: 14px; }
+  .header { padding: 0 14px; }
+  .searchbox { display: none; }
+  .logo { width: auto; }
+  .header-right { width: auto; gap: 8px; }
+  .icon-btn { width: 36px; height: 36px; }
+  .avatar-sm { width: 32px; height: 32px; font-size: 11px; }
+
+  .cover { height: 150px; }
+  .profile-top { flex-wrap: wrap; margin-top: -36px; gap: 12px; }
+  .profile-avatar { width: 72px; height: 72px; }
+  .profile-header-right { justify-content: flex-start; padding-bottom: 0; flex-wrap: wrap; }
+  .profile-name { font-size: 20px; }
+
+  .row-2col-eq { grid-template-columns: 1fr; }
+
+  /* Stats bar horizontal scroll on small */
+  .stats-row { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .stats-row::-webkit-scrollbar { display: none; }
+
+  /* Tab props map: stack vertically */
+  #tab-props > div > div[style*="grid-template-columns:400px"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  #tab-props > div > div[style*="grid-template-columns:400px"] > div:first-child {
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+  #tab-props > div > div[style*="grid-template-columns:400px"] > div:last-child {
+    height: 320px;
+  }
+
+  /* Sticky CTA bar simplify */
+  .sticky-cta { padding: 0 14px; gap: 8px; }
+  .sticky-stat { display: none; }
+  .sticky-divider { display: none; }
+  .sticky-stat:first-of-type { display: block; }
+}
+
+@media (max-width: 480px) {
+  .profile-actions { flex-wrap: wrap; gap: 8px; }
+  .btn-contact-header { width: 100%; justify-content: center; }
+}
 </style>
 </head>
 <body>

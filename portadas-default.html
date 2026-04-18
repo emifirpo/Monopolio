@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Monopolio — Portadas por defecto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0e0e0e;color:#f0f0f0;font-family:'Red Hat Display',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;padding:48px 40px 80px;}
+
+.page-header{margin-bottom:40px;}
+.page-title{font-size:24px;font-weight:700;letter-spacing:-.4px;margin-bottom:6px;}
+.page-sub{font-size:14px;color:#666;font-weight:500;}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+
+.cover-card{border-radius:16px;overflow:hidden;border:1px solid #222;cursor:pointer;transition:border-color .15s,transform .15s;}
+.cover-card:hover{border-color:#444;transform:translateY(-2px);}
+.cover-card.selected{border-color:rgba(39,89,205,.7);box-shadow:0 0 0 1px rgba(39,89,205,.4);}
+
+.cover-preview{height:200px;position:relative;}
+.cover-preview::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(10,10,10,.7) 100%);}
+
+/* ── 1. Noche Azul (default actual) ── */
+.cover-1{
+  background:
+    radial-gradient(1000px 180px at 78% -10%, rgba(39,89,205,.5), transparent 65%),
+    radial-gradient(600px 200px at 5% 130%, rgba(124,58,237,.32), transparent 60%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,.022) 0 2px, transparent 2px 14px),
+    linear-gradient(180deg, #16243f 0%, #0b1326 100%);
+}
+
+/* ── 2. Cobre ── */
+.cover-2{
+  background:
+    radial-gradient(800px 200px at 20% -20%, rgba(194,97,36,.5), transparent 60%),
+    radial-gradient(500px 150px at 90% 110%, rgba(120,50,10,.4), transparent 55%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.015) 0 1px, transparent 1px 12px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.01) 0 1px, transparent 1px 12px),
+    linear-gradient(160deg, #1f1208 0%, #110b04 100%);
+}
+
+/* ── 3. Bosque ── */
+.cover-3{
+  background:
+    radial-gradient(900px 220px at 60% -15%, rgba(22,101,52,.55), transparent 65%),
+    radial-gradient(400px 160px at 0% 120%, rgba(5,46,22,.6), transparent 55%),
+    repeating-linear-gradient(125deg, rgba(255,255,255,.016) 0 1.5px, transparent 1.5px 16px),
+    linear-gradient(170deg, #091a0f 0%, #050d07 100%);
+}
+
+/* ── 4. Tormenta ── */
+.cover-4{
+  background:
+    radial-gradient(700px 180px at 50% -10%, rgba(100,116,139,.4), transparent 60%),
+    radial-gradient(600px 200px at 100% 100%, rgba(51,65,85,.35), transparent 55%),
+    repeating-linear-gradient(110deg, rgba(255,255,255,.018) 0 1px, transparent 1px 10px),
+    linear-gradient(180deg, #111418 0%, #090b0e 100%);
+}
+
+/* ── 5. Aurora ── */
+.cover-5{
+  background:
+    radial-gradient(900px 250px at 30% -20%, rgba(124,58,237,.45), transparent 60%),
+    radial-gradient(700px 180px at 90% 20%, rgba(6,182,212,.3), transparent 55%),
+    radial-gradient(400px 140px at 10% 110%, rgba(79,70,229,.25), transparent 50%),
+    repeating-linear-gradient(145deg, rgba(255,255,255,.012) 0 1.5px, transparent 1.5px 18px),
+    linear-gradient(180deg, #0d0818 0%, #050610 100%);
+}
+
+/* ── 6. Óxido ── */
+.cover-6{
+  background:
+    radial-gradient(700px 200px at 80% -10%, rgba(159,18,57,.45), transparent 60%),
+    radial-gradient(500px 160px at 0% 100%, rgba(120,10,30,.35), transparent 55%),
+    repeating-linear-gradient(160deg, rgba(255,255,255,.014) 0 1px, transparent 1px 12px),
+    linear-gradient(165deg, #190709 0%, #0d0405 100%);
+}
+
+/* ── 7. Niebla ── */
+.cover-7{
+  background:
+    radial-gradient(1100px 220px at 50% -30%, rgba(148,163,184,.18), transparent 65%),
+    radial-gradient(500px 180px at 0% 120%, rgba(100,116,139,.12), transparent 55%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.014) 0 1px, transparent 1px 20px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.008) 0 1px, transparent 1px 20px),
+    linear-gradient(180deg, #141618 0%, #0a0b0d 100%);
+}
+
+/* ── 8. Océano ── */
+.cover-8{
+  background:
+    radial-gradient(800px 200px at 70% -10%, rgba(8,145,178,.4), transparent 60%),
+    radial-gradient(500px 160px at 5% 110%, rgba(14,116,144,.3), transparent 55%),
+    radial-gradient(300px 100px at 50% 60%, rgba(6,182,212,.12), transparent 50%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,.016) 0 1.5px, transparent 1.5px 14px),
+    linear-gradient(180deg, #051920 0%, #020d13 100%);
+}
+
+/* ── 9. Mármol ── */
+.cover-9{
+  background:
+    radial-gradient(600px 180px at 20% 20%, rgba(255,255,255,.04), transparent 60%),
+    radial-gradient(400px 120px at 80% 80%, rgba(255,255,255,.03), transparent 55%),
+    repeating-linear-gradient(35deg, rgba(255,255,255,.022) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(125deg, rgba(255,255,255,.012) 0 1px, transparent 1px 34px),
+    linear-gradient(145deg, #1a1a1a 0%, #0f0f0f 100%);
+}
+
+.cover-meta{padding:16px 18px;background:#161616;}
+.cover-name{font-size:14px;font-weight:700;margin-bottom:2px;}
+.cover-desc{font-size:12px;color:#555;font-weight:500;}
+.cover-badge{display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+.badge-default{background:rgba(39,89,205,.15);color:#93b4ff;border:1px solid rgba(39,89,205,.3);}
+.badge-available{background:rgba(255,255,255,.06);color:#666;border:1px solid #222;}
+
+/* Selected indicator */
+.cover-card.selected .cover-meta::before{
+  content:"✓ Activa en V9";
+  display:block;
+  font-size:10px;
+  font-weight:700;
+  color:#93b4ff;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+  opacity:.8;
+}
+
+/* CSS variable reference block */
+.ref-block{margin-top:48px;padding:24px;background:#161616;border:1px solid #222;border-radius:12px;}
+.ref-title{font-size:13px;font-weight:700;color:#666;letter-spacing:.05em;text-transform:uppercase;margin-bottom:16px;}
+.ref-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.ref-item{background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:12px 14px;}
+.ref-label{font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}
+.ref-val{font-size:11px;font-weight:600;color:#777;font-family:monospace;line-height:1.7;word-break:break-all;}
+
+/* Swatches row */
+.swatches{display:flex;gap:8px;margin-top:24px;flex-wrap:wrap;}
+.swatch{width:40px;height:40px;border-radius:8px;border:1px solid #222;cursor:pointer;transition:transform .12s,border-color .15s;flex-shrink:0;}
+.swatch:hover{transform:scale(1.12);border-color:#444;}
+.swatch.active{border-color:#2759cd;box-shadow:0 0 0 2px rgba(39,89,205,.35);}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-title">Portadas por defecto</div>
+  <div class="page-sub">Stack de covers disponibles hasta que el asesor suba los suyos desde su plataforma · Generadas en CSS puro, sin imágenes</div>
+</div>
+
+<div class="grid">
+
+  <!-- 1 -->
+  <div class="cover-card selected">
+    <div class="cover-preview cover-1"></div>
+    <div class="cover-meta">
+      <div class="cover-name">Noche Azul</div>
+      <div class="cover-desc">Gradiente azul profundo · diagonal sutil</div>
+      <span class="cover-badge badge-default">Default</span>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="cover-card">
+    <div class="cover-preview cover-2"></div>
+    <div class="cover-meta">
+      <div class="cover-name">Cobre</div>
+      <div class="cover-desc">Warm amber · grid ortogonal tenue</div>
+      <span class="cover-badge badge-available">Disponible</span>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="cover-card">
+    <div class="cover-preview cover-3"></div>
+    <div class="cover-meta">
+      <div class="cover-name">Bosque</div>
+      <div class="cover-desc">Verde profundo · líneas diagonales</div>
+      <span class="cover-badge badge-available">Disponible</span>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="cover-card">
+    <div class="cover-preview cover-4"></div>
+    <div class="cover-meta">
+      <div class="cover-name">Tormenta</div>
+      <div class="cover-desc">Gris pizarra · patrón diagonal fino</div>
+      <span class="cover-badge badge-available">Disponible</span>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="cover-card">
+    <div class="cover-preview cover-5"></div>
+    <div class="cover-meta">
+      <div class="cover-name">Aurora</div>
+      <div class="cover-desc">Violeta a cian · efecto aurora boreal</div>
+      <span class="cover-badge badge-available">Disponible</span>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="cover-card">
+    <div class="cover-preview cover-6"></div>
+    <div class="cover-meta">
+      <div class="cover-name">Óxido</div>
+      <div class="cover-desc">Carmesí oscuro · líneas inclinadas</div>
+      <span class="cover-badge badge-available">Disponible</span>
+    </div>
+  </div>
+
+  <!-- 7 -->
+  <div class="cover-card">
+    <div class="cover-preview cover-7"></div>
+    <div class="cover-meta">
+      <div class="cover-name">Niebla</div>
+      <div class="cover-desc">Casi negro · grid cuadriculado sutil</div>
+      <span class="cover-badge badge-available">Disponible</span>
+    </div>
+  </div>
+
+  <!-- 8 -->
+  <div class="cover-card">
+    <div class="cover-preview cover-8"></div>
+    <div class="cover-meta">
+      <div class="cover-name">Océano</div>
+      <div class="cover-desc">Teal profundo · reflejos diagonales</div>
+      <span class="cover-badge badge-available">Disponible</span>
+    </div>
+  </div>
+
+  <!-- 9 -->
+  <div class="cover-card">
+    <div class="cover-preview cover-9"></div>
+    <div class="cover-meta">
+      <div class="cover-name">Mármol</div>
+      <div class="cover-desc">Gris neutro · vetas cruzadas</div>
+      <span class="cover-badge badge-available">Disponible</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Reference swatches -->
+<div class="ref-block">
+  <div class="ref-title">Referencia rápida — preview de color base</div>
+  <div class="swatches">
+    <div class="swatch active" style="background:linear-gradient(135deg,#16243f,#0b1326)" title="Noche Azul"></div>
+    <div class="swatch" style="background:linear-gradient(135deg,#1f1208,#110b04)" title="Cobre"></div>
+    <div class="swatch" style="background:linear-gradient(135deg,#091a0f,#050d07)" title="Bosque"></div>
+    <div class="swatch" style="background:linear-gradient(135deg,#111418,#090b0e)" title="Tormenta"></div>
+    <div class="swatch" style="background:linear-gradient(135deg,#0d0818,#050610)" title="Aurora"></div>
+    <div class="swatch" style="background:linear-gradient(135deg,#190709,#0d0405)" title="Óxido"></div>
+    <div class="swatch" style="background:linear-gradient(135deg,#141618,#0a0b0d)" title="Niebla"></div>
+    <div class="swatch" style="background:linear-gradient(135deg,#051920,#020d13)" title="Océano"></div>
+    <div class="swatch" style="background:linear-gradient(135deg,#1a1a1a,#0f0f0f)" title="Mármol"></div>
+  </div>
+
+  <div class="ref-grid" style="margin-top:20px">
+    <div class="ref-item">
+      <div class="ref-label">Clase CSS</div>
+      <div class="ref-val">.cover-noche-azul<br>.cover-cobre<br>.cover-bosque<br>.cover-tormenta<br>.cover-aurora<br>.cover-oxido<br>.cover-niebla<br>.cover-oceano<br>.cover-marmol</div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-label">Lógica de asignación</div>
+      <div class="ref-val">
+        Si asesor.portada → usar imagen<br>
+        Si no → portada_default[asesor.id % 9]<br><br>
+        Garantiza distribución uniforme<br>
+        y visual consistente entre perfiles sin foto.
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
